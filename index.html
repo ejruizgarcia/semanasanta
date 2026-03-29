@@ -23,7 +23,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden relative">
 
     <!-- Cabecera fija -->
     <header class="bg-rose-900 text-white p-4 shadow-md z-10 shrink-0">
@@ -70,11 +70,18 @@
     </header>
 
     <!-- Contenedor principal desplazable -->
-    <main class="flex-1 overflow-y-auto p-4" id="mainContainer">
+    <main class="flex-1 overflow-y-auto p-4 pb-24" id="mainContainer">
         <div id="listaCofradias" class="flex flex-col gap-4 max-w-lg mx-auto pb-6">
             <!-- Los botones se inyectan aquí con JS -->
         </div>
     </main>
+
+    <!-- Botón Flotante Juego del Impostor -->
+    <button onclick="abrirImpostor()" class="fixed bottom-6 right-6 p-4 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 transition active:scale-95 z-40 border-2 border-white" aria-label="Jugar al Impostor">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path>
+        </svg>
+    </button>
 
     <!-- Modal de Detalle (Oculto por defecto) -->
     <div id="detalleModal" class="fixed inset-0 bg-white z-50 hidden flex-col h-full w-full">
@@ -151,6 +158,20 @@
                     <span class="font-bold text-gray-800 text-lg">La Venera</span>
                 </a>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal del Juego del Impostor -->
+    <div id="impostorModal" class="fixed inset-0 bg-gray-900 z-50 hidden flex-col h-full w-full text-white">
+        <div class="p-4 flex items-center shadow-md shrink-0 bg-gray-800">
+            <button onclick="cerrarImpostor()" class="mr-4 p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition active:scale-95">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </button>
+            <h2 class="text-xl font-bold truncate">El Impostor Cofrade</h2>
+        </div>
+        
+        <div id="impostorContenido" class="flex-1 overflow-y-auto p-5 flex flex-col items-center justify-center gap-6">
+            <!-- El contenido dinámico del juego se inyecta aquí -->
         </div>
     </div>
 
@@ -364,6 +385,180 @@
             const modal = document.getElementById('fbModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex', 'fade-in');
+        }
+
+        /* --- LOGICA DEL JUEGO DEL IMPOSTOR --- */
+        
+        const diccionarioCofrade = [
+            "Carrera Oficial", "Capirote", "Incienso", "Cargador", "Capataz", 
+            "Trabajadera", "Marcha procesional", "Iglesia Mayor", "La Isla", 
+            "Torrija", "Mantilla", "Nazareno", "Cruz de Guía", "Paso de palio", 
+            "Paso de misterio", "Saeta", "Candelabro", "Faja", "Costal", 
+            "Llamador", "Banda de música", "Penitente", "Bambalina", "Tortillita de camarones",
+            "IslaPasión", "La Venera", "Chicotá"
+        ];
+
+        let impJugadores = [];
+        let impImpostorIndex = -1;
+        let impPalabraSecreta = '';
+        let impTurnoActual = 0;
+
+        function abrirImpostor() {
+            const modal = document.getElementById('impostorModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex', 'fade-in');
+            renderImpostorSetup();
+        }
+
+        function cerrarImpostor() {
+            const modal = document.getElementById('impostorModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex', 'fade-in');
+        }
+
+        function generarInputsNombres() {
+            const num = parseInt(document.getElementById('numJugadores').value);
+            const contenedorNombres = document.getElementById('contenedorNombres');
+            contenedorNombres.innerHTML = '';
+            
+            for (let i = 1; i <= num; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-3 focus:outline-none focus:border-rose-500';
+                input.placeholder = `Nombre del jugador ${i}`;
+                input.id = `nombreJugador${i}`;
+                contenedorNombres.appendChild(input);
+            }
+        }
+
+        function renderImpostorSetup() {
+            const contenedor = document.getElementById('impostorContenido');
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col gap-6 fade-in text-center">
+                    <p class="text-gray-300">Descubre quién es el infiltrado en la cofradía. Todos verán una palabra secreta excepto el impostor.</p>
+                    
+                    <div class="flex flex-col gap-2 text-left">
+                        <label class="text-sm font-bold text-gray-400 uppercase tracking-wider">Número de jugadores</label>
+                        <select id="numJugadores" onchange="generarInputsNombres()" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-3 focus:outline-none">
+                            <option value="3">3 Jugadores</option>
+                            <option value="4" selected>4 Jugadores</option>
+                            <option value="5">5 Jugadores</option>
+                            <option value="6">6 Jugadores</option>
+                            <option value="7">7 Jugadores</option>
+                            <option value="8">8 Jugadores</option>
+                        </select>
+                    </div>
+
+                    <div id="contenedorNombres" class="flex flex-col gap-3">
+                        <!-- Inputs generados aquí -->
+                    </div>
+
+                    <button onclick="iniciarJuegoImpostor()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg mt-2">
+                        Comenzar Partida
+                    </button>
+                </div>
+            `;
+            generarInputsNombres();
+        }
+
+        function iniciarJuegoImpostor() {
+            const num = parseInt(document.getElementById('numJugadores').value);
+            impJugadores = [];
+            
+            for (let i = 1; i <= num; i++) {
+                const nombre = document.getElementById(`nombreJugador${i}`).value.trim() || `Jugador ${i}`;
+                impJugadores.push(nombre);
+            }
+
+            impImpostorIndex = Math.floor(Math.random() * impJugadores.length);
+            impPalabraSecreta = diccionarioCofrade[Math.floor(Math.random() * diccionarioCofrade.length)];
+            impTurnoActual = 0;
+
+            mostrarTurnoPass();
+        }
+
+        function mostrarTurnoPass() {
+            const contenedor = document.getElementById('impostorContenido');
+            const nombreActual = impJugadores[impTurnoActual];
+
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
+                    <svg class="w-20 h-20 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    
+                    <div>
+                        <p class="text-xl text-gray-400 mb-2">Pasa el dispositivo a</p>
+                        <h3 class="text-4xl font-bold text-white text-rose-500">${nombreActual}</h3>
+                    </div>
+
+                    <button onclick="revelarRol()" class="w-full bg-gray-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-gray-600 transition active:scale-95 text-lg">
+                        Soy ${nombreActual}, ver mi rol
+                    </button>
+                </div>
+            `;
+        }
+
+        function revelarRol() {
+            const contenedor = document.getElementById('impostorContenido');
+            const esImpostor = (impTurnoActual === impImpostorIndex);
+
+            let contenidoRol = '';
+            if (esImpostor) {
+                contenidoRol = `
+                    <p class="text-2xl font-bold text-red-500 mb-2">¡ERES EL IMPOSTOR!</p>
+                    <p class="text-gray-300">Intenta disimular y adivinar la palabra por el contexto de los demás.</p>
+                `;
+            } else {
+                contenidoRol = `
+                    <p class="text-gray-400 uppercase tracking-widest text-sm mb-1">Palabra Secreta</p>
+                    <p class="text-4xl font-bold text-white mb-2">${impPalabraSecreta}</p>
+                    <p class="text-gray-400">Mantén la palabra en secreto.</p>
+                `;
+            }
+
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
+                    <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 w-full shadow-inner">
+                        ${contenidoRol}
+                    </div>
+
+                    <button onclick="siguienteTurno()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg">
+                        Ocultar y continuar
+                    </button>
+                </div>
+            `;
+        }
+
+        function siguienteTurno() {
+            impTurnoActual++;
+            if (impTurnoActual < impJugadores.length) {
+                mostrarTurnoPass();
+            } else {
+                mostrarFinPreparacion();
+            }
+        }
+
+        function mostrarFinPreparacion() {
+            const contenedor = document.getElementById('impostorContenido');
+            
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
+                    <svg class="w-24 h-24 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+                    
+                    <div>
+                        <h3 class="text-3xl font-bold text-white mb-3">Todos listos</h3>
+                        <p class="text-gray-300">Todos conocen su rol. Que empiece el debate para encontrar al impostor de la cofradía.</p>
+                    </div>
+
+                    <div class="w-full flex gap-3">
+                        <button onclick="cerrarImpostor()" class="flex-1 bg-gray-700 text-white font-bold py-3 rounded-xl hover:bg-gray-600 transition active:scale-95">
+                            Cerrar
+                        </button>
+                        <button onclick="renderImpostorSetup()" class="flex-1 bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-500 transition active:scale-95">
+                            Nueva Partida
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         window.onload = function() {
