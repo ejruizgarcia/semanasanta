@@ -75,7 +75,7 @@
     <!-- Marca de agua general -->
     <div class="fixed inset-0 z-0 pointer-events-none opacity-15 bg-[url('https://raw.githubusercontent.com/ejruizgarcia/images/main/cartel.jpg')] bg-cover bg-center"></div>
 
-    <!-- Contenedor de notificaciones flotantes (movido a un tercio de la pantalla) -->
+    <!-- Contenedor de notificaciones flotantes -->
     <div id="toastContainer" class="fixed top-1/3 inset-x-0 z-[60] flex flex-col items-center gap-3 pointer-events-none px-4"></div>
 
     <!-- Cabecera fija -->
@@ -118,7 +118,6 @@
                 <button class="dia-btn snap-center shrink-0 px-5 py-2.5 rounded-full font-bold text-sm transition-all" data-dia="viernes" onclick="seleccionarDia('viernes')">Viernes Santo</button>
                 <button class="dia-btn snap-center shrink-0 px-5 py-2.5 rounded-full font-bold text-sm transition-all" data-dia="resurreccion" onclick="seleccionarDia('resurreccion')">Resurrección</button>
             </div>
-            <!-- Sombreado lateral para indicar que hay scroll -->
             <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-rose-900 to-transparent"></div>
         </div>
     </header>
@@ -130,8 +129,8 @@
         </div>
     </main>
 
-    <!-- Botón Flotante Juego del Impostor -->
-    <button onclick="abrirImpostor()" class="fixed bottom-6 right-6 p-4 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 transition active:scale-95 z-40 border-2 border-white" aria-label="Jugar al Impostor">
+    <!-- Botón Flotante Menú Juegos -->
+    <button onclick="abrirJuegos()" class="fixed bottom-6 right-6 p-4 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 transition active:scale-95 z-40 border-2 border-white" aria-label="Juegos Cofrades">
         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.5L5.5 14.5C3.57 14.5 2 16.07 2 18v3h20v-3c0-1.93-1.57-3.5-3.5-3.5L12 1.5z M9.5 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm5 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
         </svg>
@@ -235,17 +234,17 @@
         </div>
     </div>
 
-    <!-- Modal del Juego del Impostor -->
-    <div id="impostorModal" class="fixed inset-0 bg-gray-900 z-50 hidden flex-col h-full w-full text-white">
+    <!-- Modal de Juegos (Impostor y Trivial) -->
+    <div id="juegosModal" class="fixed inset-0 bg-gray-900 z-50 hidden flex-col h-full w-full text-white">
         <div class="p-4 flex items-center shadow-md shrink-0 bg-gray-800">
-            <button onclick="cerrarImpostor()" class="mr-4 p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition active:scale-95">
+            <button onclick="cerrarJuegos()" class="mr-4 p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition active:scale-95">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             </button>
-            <h2 class="text-xl font-bold truncate">El Impostor Cofrade</h2>
+            <h2 id="juegosTitulo" class="text-xl font-bold truncate">Juegos Cofrades</h2>
         </div>
         
-        <div id="impostorContenido" class="flex-1 overflow-y-auto p-5 flex flex-col items-center justify-center gap-6">
-            <!-- El contenido dinámico del juego se inyecta aquí -->
+        <div id="juegosContenido" class="flex-1 overflow-y-auto p-5 flex flex-col items-center justify-center gap-6">
+            <!-- Contenido dinámico -->
         </div>
     </div>
 
@@ -357,7 +356,6 @@
 
                 const enCalle = ahora >= barra.salidaTs && ahora < barra.recogidaTs;
 
-                // Solo mantenemos el borde si está en la calle, el destello dorado se añade en la notificación.
                 barra.boton.classList.remove('ring-2', 'ring-rose-500', 'border-transparent', 'border-gray-200');
 
                 if (enCalle) {
@@ -376,9 +374,7 @@
                 if (!notificados.has(barra.nombre + 'co') && ahora >= barra.inicioTs && ahora <= barra.inicioTs + windowMs) {
                     notificados.add(barra.nombre + 'co');
                     mostrarNotificacion(`¡${barra.nombre} entra en Carrera Oficial!`, '✨');
-                    // Activamos la clase especial de destello único
                     barra.boton.classList.add('shimmer-flash');
-                    // Eliminamos la clase para que no se quede enganchada, así el efecto termina limpio
                     setTimeout(() => barra.boton.classList.remove('shimmer-flash'), 3500);
                 }
                 
@@ -491,7 +487,6 @@
             
             document.getElementById('mainContainer').scrollTop = 0;
             
-            // Refresco cada 10 segundos para mayor precisión con animaciones en vivo
             actualizarProgresoLive(barrasParaActualizar);
             progresoInterval = setInterval(() => actualizarProgresoLive(barrasParaActualizar), 10000);
         }
@@ -557,8 +552,114 @@
             modal.classList.remove('flex', 'fade-in');
         }
 
-        /* --- LOGICA DEL JUEGO DEL IMPOSTOR --- */
-        
+        /* --- LOGICA GENERAL DE JUEGOS --- */
+        let juegoSeleccionado = ''; 
+
+        function abrirJuegos() {
+            const modal = document.getElementById('juegosModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex', 'fade-in');
+            document.getElementById('juegosTitulo').innerText = 'Juegos Cofrades';
+            renderJuegosMenu();
+        }
+
+        function cerrarJuegos() {
+            const modal = document.getElementById('juegosModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex', 'fade-in');
+            setTimeout(renderJuegosMenu, 300);
+        }
+
+        function renderJuegosMenu() {
+            const contenedor = document.getElementById('juegosContenido');
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col gap-4 fade-in text-center">
+                    <p class="text-gray-300 mb-4">Selecciona un juego para pasar el rato.</p>
+                    
+                    <button onclick="seleccionarJuego('impostor')" class="w-full bg-rose-700 text-white font-bold py-6 px-4 rounded-2xl shadow-lg hover:bg-rose-600 transition active:scale-95 text-xl border border-rose-500">
+                        🕵️ El Impostor Cofrade
+                    </button>
+                    
+                    <button onclick="seleccionarJuego('trivial')" class="w-full bg-blue-700 text-white font-bold py-6 px-4 rounded-2xl shadow-lg hover:bg-blue-600 transition active:scale-95 text-xl border border-blue-500">
+                        🧠 Trivial Cofrade
+                    </button>
+                </div>
+            `;
+        }
+
+        function seleccionarJuego(juego) {
+            juegoSeleccionado = juego;
+            document.getElementById('juegosTitulo').innerText = juego === 'impostor' ? 'El Impostor Cofrade' : 'Trivial Cofrade';
+            renderJuegosSetup();
+        }
+
+        function generarInputsNombresJuegos() {
+            const num = parseInt(document.getElementById('numJugadoresJuegos').value);
+            const contenedorNombres = document.getElementById('contenedorNombresJuegos');
+            contenedorNombres.innerHTML = '';
+            
+            for (let i = 1; i <= num; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-3 focus:outline-none focus:border-rose-500';
+                input.placeholder = `Nombre del jugador ${i}`;
+                input.id = `nombreJugadorJuegos${i}`;
+                contenedorNombres.appendChild(input);
+            }
+        }
+
+        function renderJuegosSetup() {
+            const contenedor = document.getElementById('juegosContenido');
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col gap-6 fade-in text-center">
+                    <p class="text-gray-300">Introduce los participantes para comenzar.</p>
+                    
+                    <div class="flex flex-col gap-2 text-left">
+                        <label class="text-sm font-bold text-gray-400 uppercase tracking-wider">Número de jugadores</label>
+                        <select id="numJugadoresJuegos" onchange="generarInputsNombresJuegos()" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-3 focus:outline-none">
+                            <option value="2">2 Jugadores</option>
+                            <option value="3">3 Jugadores</option>
+                            <option value="4" selected>4 Jugadores</option>
+                            <option value="5">5 Jugadores</option>
+                            <option value="6">6 Jugadores</option>
+                            <option value="7">7 Jugadores</option>
+                            <option value="8">8 Jugadores</option>
+                        </select>
+                    </div>
+
+                    <div id="contenedorNombresJuegos" class="flex flex-col gap-3">
+                        <!-- Inputs generados aquí -->
+                    </div>
+
+                    <button onclick="iniciarJuegoGeneral()" class="w-full ${juegoSeleccionado === 'impostor' ? 'bg-rose-600 hover:bg-rose-500' : 'bg-blue-600 hover:bg-blue-500'} text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-95 text-lg mt-2">
+                        Comenzar Partida
+                    </button>
+                    
+                    <button onclick="renderJuegosMenu()" class="text-gray-400 hover:text-white transition text-sm">
+                        Volver al menú de juegos
+                    </button>
+                </div>
+            `;
+            generarInputsNombresJuegos();
+        }
+
+        function iniciarJuegoGeneral() {
+            const num = parseInt(document.getElementById('numJugadoresJuegos').value);
+            let nombres = [];
+            for (let i = 1; i <= num; i++) {
+                const nombre = document.getElementById(`nombreJugadorJuegos${i}`).value.trim() || `Jugador ${i}`;
+                nombres.push(nombre);
+            }
+
+            if (juegoSeleccionado === 'impostor') {
+                impJugadoresOriginal = nombres;
+                iniciarSiguienteRondaImpostor();
+            } else {
+                iniciarTrivial(nombres);
+            }
+        }
+
+        /* --- LOGICA DEL IMPOSTOR COFRADE --- */
         const diccionarioCofrade = [
             "Carrera Oficial", "Capirote", "Incienso", "Cargador", "Capataz", 
             "Trabajadera", "Marcha procesional", "Iglesia Mayor", "La Isla", 
@@ -586,157 +687,66 @@
         let impTurnoActual = 0;
         let impJugadorInicia = '';
 
-        function abrirImpostor() {
-            const modal = document.getElementById('impostorModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex', 'fade-in');
-            renderImpostorSetup();
-        }
-
-        function cerrarImpostor() {
-            const modal = document.getElementById('impostorModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex', 'fade-in');
-            setTimeout(renderImpostorSetup, 300);
-        }
-
-        function generarInputsNombres() {
-            const num = parseInt(document.getElementById('numJugadores').value);
-            const contenedorNombres = document.getElementById('contenedorNombres');
-            contenedorNombres.innerHTML = '';
-            
-            for (let i = 1; i <= num; i++) {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-3 focus:outline-none focus:border-rose-500';
-                input.placeholder = `Nombre del jugador ${i}`;
-                input.id = `nombreJugador${i}`;
-                contenedorNombres.appendChild(input);
-            }
-        }
-
-        function renderImpostorSetup() {
-            const contenedor = document.getElementById('impostorContenido');
-            contenedor.innerHTML = `
-                <div class="w-full max-w-sm flex flex-col gap-6 fade-in text-center">
-                    <p class="text-gray-300">Descubre quién es el infiltrado en la cofradía. Todos verán una palabra secreta excepto el impostor.</p>
-                    
-                    <div class="flex flex-col gap-2 text-left">
-                        <label class="text-sm font-bold text-gray-400 uppercase tracking-wider">Número de jugadores</label>
-                        <select id="numJugadores" onchange="generarInputsNombres()" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg p-3 focus:outline-none">
-                            <option value="3">3 Jugadores</option>
-                            <option value="4" selected>4 Jugadores</option>
-                            <option value="5">5 Jugadores</option>
-                            <option value="6">6 Jugadores</option>
-                            <option value="7">7 Jugadores</option>
-                            <option value="8">8 Jugadores</option>
-                        </select>
-                    </div>
-
-                    <div id="contenedorNombres" class="flex flex-col gap-3">
-                        <!-- Inputs generados aquí -->
-                    </div>
-
-                    <button onclick="iniciarJuegoImpostor()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg mt-2">
-                        Comenzar Partida
-                    </button>
-                </div>
-            `;
-            generarInputsNombres();
-        }
-
-        function iniciarJuegoImpostor() {
-            const num = parseInt(document.getElementById('numJugadores').value);
-            impJugadoresOriginal = [];
-            
-            for (let i = 1; i <= num; i++) {
-                const nombre = document.getElementById(`nombreJugador${i}`).value.trim() || `Jugador ${i}`;
-                impJugadoresOriginal.push(nombre);
-            }
-
-            iniciarSiguienteRonda();
-        }
-
-        function iniciarSiguienteRonda() {
-            // Barajamos el orden en el que se pasan el móvil para que sea diferente en cada ronda
+        function iniciarSiguienteRondaImpostor() {
             impJugadores = [...impJugadoresOriginal].sort(() => Math.random() - 0.5);
-            
             impImpostorIndex = Math.floor(Math.random() * impJugadores.length);
             impPalabraSecreta = diccionarioCofrade[Math.floor(Math.random() * diccionarioCofrade.length)];
             impTurnoActual = 0;
-            
             impJugadorInicia = impJugadores[Math.floor(Math.random() * impJugadores.length)];
-
-            mostrarTurnoPass();
+            mostrarTurnoPassImpostor();
         }
 
-        function mostrarTurnoPass() {
-            const contenedor = document.getElementById('impostorContenido');
+        function mostrarTurnoPassImpostor() {
+            const contenedor = document.getElementById('juegosContenido');
             const nombreActual = impJugadores[impTurnoActual];
 
             contenedor.innerHTML = `
                 <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
                     <svg class="w-20 h-20 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                    
                     <div>
                         <p class="text-xl text-gray-400 mb-2">Pasa el dispositivo a</p>
                         <h3 class="text-4xl font-bold text-white text-rose-500">${nombreActual}</h3>
                     </div>
-
-                    <button onclick="revelarRol()" class="w-full bg-gray-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-gray-600 transition active:scale-95 text-lg">
+                    <button onclick="revelarRolImpostor()" class="w-full bg-gray-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-gray-600 transition active:scale-95 text-lg">
                         Soy ${nombreActual}, ver mi rol
                     </button>
                 </div>
             `;
         }
 
-        function revelarRol() {
-            const contenedor = document.getElementById('impostorContenido');
+        function revelarRolImpostor() {
+            const contenedor = document.getElementById('juegosContenido');
             const esImpostor = (impTurnoActual === impImpostorIndex);
-
-            let contenidoRol = '';
-            if (esImpostor) {
-                contenidoRol = `
-                    <p class="text-2xl font-bold text-red-500 mb-2">¡ERES EL IMPOSTOR!</p>
-                    <p class="text-gray-300">Intenta disimular y adivinar la palabra por el contexto de los demás.</p>
-                `;
-            } else {
-                contenidoRol = `
-                    <p class="text-gray-400 uppercase tracking-widest text-sm mb-1">Palabra Secreta</p>
-                    <p class="text-4xl font-bold text-white mb-2">${impPalabraSecreta}</p>
-                    <p class="text-gray-400">Mantén la palabra en secreto.</p>
-                `;
-            }
+            let contenidoRol = esImpostor 
+                ? `<p class="text-2xl font-bold text-red-500 mb-2">¡ERES EL IMPOSTOR!</p><p class="text-gray-300">Intenta disimular y adivinar la palabra por el contexto de los demás.</p>`
+                : `<p class="text-gray-400 uppercase tracking-widest text-sm mb-1">Palabra Secreta</p><p class="text-4xl font-bold text-white mb-2">${impPalabraSecreta}</p><p class="text-gray-400">Mantén la palabra en secreto.</p>`;
 
             contenedor.innerHTML = `
                 <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
                     <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 w-full shadow-inner">
                         ${contenidoRol}
                     </div>
-
-                    <button onclick="siguienteTurno()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg">
+                    <button onclick="siguienteTurnoImpostor()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg">
                         Ocultar y continuar
                     </button>
                 </div>
             `;
         }
 
-        function siguienteTurno() {
+        function siguienteTurnoImpostor() {
             impTurnoActual++;
             if (impTurnoActual < impJugadores.length) {
-                mostrarTurnoPass();
+                mostrarTurnoPassImpostor();
             } else {
-                mostrarFinPreparacion();
+                mostrarFinPreparacionImpostor();
             }
         }
 
-        function mostrarFinPreparacion() {
-            const contenedor = document.getElementById('impostorContenido');
-            
+        function mostrarFinPreparacionImpostor() {
+            const contenedor = document.getElementById('juegosContenido');
             contenedor.innerHTML = `
                 <div class="w-full max-w-sm flex flex-col items-center gap-6 fade-in text-center">
                     <svg class="w-24 h-24 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
-                    
                     <div>
                         <h3 class="text-3xl font-bold text-white mb-3">Todos listos</h3>
                         <p class="text-gray-300">Que empiece el debate para encontrar al impostor de la cofradía.</p>
@@ -744,7 +754,6 @@
                             Empieza a hablar: <span class="text-white">${impJugadorInicia}</span>
                         </p>
                     </div>
-
                     <button onclick="revelarImpostorFinal()" class="w-full bg-amber-500 text-gray-900 font-bold py-4 rounded-xl shadow-lg hover:bg-amber-400 transition active:scale-95 text-lg mt-2">
                         Revelar Impostor
                     </button>
@@ -753,28 +762,293 @@
         }
 
         function revelarImpostorFinal() {
-            const contenedor = document.getElementById('impostorContenido');
+            const contenedor = document.getElementById('juegosContenido');
             const nombreImpostor = impJugadores[impImpostorIndex];
-            
             contenedor.innerHTML = `
                 <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
                     <div class="bg-gray-800 p-8 rounded-2xl border border-rose-700 w-full shadow-inner">
                         <p class="text-gray-400 uppercase tracking-widest text-sm mb-1">El impostor era...</p>
                         <p class="text-4xl font-bold text-rose-500 mb-6">${nombreImpostor}</p>
-                        
                         <p class="text-gray-400 uppercase tracking-widest text-sm mb-1 border-t border-gray-700 pt-6">La palabra secreta era</p>
                         <p class="text-2xl font-bold text-white mb-2">${impPalabraSecreta}</p>
                     </div>
-
-                    <button onclick="iniciarSiguienteRonda()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg">
+                    <button onclick="iniciarSiguienteRondaImpostor()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg">
                         Siguiente Ronda
                     </button>
-
-                    <button onclick="cerrarImpostor()" class="w-full text-gray-400 hover:text-white font-bold py-2 transition mt-2">
+                    <button onclick="cerrarJuegos()" class="w-full text-gray-400 hover:text-white font-bold py-2 transition mt-2">
                         Terminar Juego
                     </button>
                 </div>
             `;
+        }
+
+        /* --- LOGICA DEL TRIVIAL COFRADE --- */
+        const bancoPreguntasTrivial = [
+            { q: "¿Cuál es la cofradía de penitencia más antigua de San Fernando?", a: "La Hermandad de la Soledad.", e: ["La Hermandad del Nazareno.", "La Hermandad de la Vera Cruz.", "La Hermandad del Carmen."] },
+            { q: "¿En qué año fue fundada la Hermandad de Nuestra Madre y Señora María Santísima de la Soledad?", a: "En 1747.", e: ["En 1768.", "En 1759.", "En 1795."] },
+            { q: "¿Qué gremio monopolizó la fundación y primeros años de la Hermandad del Nazareno?", a: "El gremio de los montañeses (ultramarinos).", e: ["El gremio de los mareantes.", "El gremio de los obreros de la maestranza.", "El gremio de los estudiantes."] },
+            { q: "¿De dónde procedía la imagen del Cristo Yacente del Santo Entierro traída a la Isla en 1790?", a: "De Génova.", e: ["De Nápoles.", "De Sevilla.", "De Roma."] },
+            { q: "¿Qué hermandad isleña surgió de la fusión en 1977 de una Orden Tercera y la Hermandad de Mater Amabilis?", a: "La Orden Seglar de los Siervos de María (Servitas).", e: ["La Hermandad del Rosario Doloroso.", "La Hermandad de los Desamparados.", "La Hermandad del Gran Poder."] },
+            { q: "¿Qué imaginero local talló las imágenes titulares de la cofradía del Prendimiento?", a: "Alfonso Berraquero García.", e: ["Antonio Castillo Lastrucci.", "Antonio Bey Olvera.", "Luis Álvarez Duarte."] },
+            { q: "¿En qué lugar, según la leyenda, se encontró la imagen del Nazareno dejada por unos viajeros italianos?", a: "En el antiguo Mesón del Duque.", e: ["En la playa de la Casería.", "En el Castillo de San Romualdo.", "En el Arsenal de La Carraca."] },
+            { q: "¿Qué calle fue por excelencia la carrera oficial de la Semana Santa isleña durante bastantes décadas?", a: "La calle Rosario.", e: ["La calle Constructora Naval.", "La calle Real.", "La calle de Las Siete Revueltas."] },
+            { q: "¿Qué cofradía procesionó por primera vez en la madrugada del Viernes Santo de 1987 desde el antiguo Hospital de San José?", a: "Los Desamparados.", e: ["El Perdón.", "La Expiración.", "El Rosario Doloroso."] },
+            { q: "¿Cuál fue la primera cofradía de penitencia establecida en la iglesia de la Divina Pastora?", a: "La Oración en el Huerto.", e: ["El Ecce Homo.", "La Misericordia.", "La Sagrada Resurrección."] },
+            { q: "¿Qué imagen titular fue tallada por el escultor guipuzcoano del Arsenal de la Carraca, José Tomás de Cirartegui Saralegui (1788)?", a: "El Cristo de la Expiración.", e: ["El Cristo de la Redención.", "Jesús del Gran Poder.", "El Cristo de la Sangre."] },
+            { q: "¿Qué hermandad recuperó en 1997 el título de Gremial de Sanidad?", a: "Los Desamparados.", e: ["La Sanidad (Misericordia).", "El Ecce Homo.", "Los Afligidos (Estudiantes)."] },
+            { q: "Junto con la del Nazareno, ¿cuál fue la única cofradía de penitencia que procesionó durante la Segunda República en 1935?", a: "La Vera Cruz.", e: ["El Santo Entierro.", "La Expiración.", "La Soledad."] },
+            { q: "¿Qué corporación es conocida desde la posguerra con el sobrenombre del «Silencio»?", a: "La Expiración.", e: ["El Rosario Doloroso.", "El Santo Entierro.", "Servitas."] },
+            { q: "¿En qué devoción se inspiró la fundación de la hermandad de la Caridad en 1942?", a: "En la Patrona de la ciudad de Cartagena.", e: ["En la hermandad de los Panaderos de Sevilla.", "En el Gran Poder de Sevilla.", "En el Cristo de Medinaceli de Madrid."] },
+            { q: "¿Qué escultor talló el actual Cristo de la Redención de la Hermandad de la Soledad en 1964?", a: "Antonio Castillo Lastrucci.", e: ["Alfonso Berraquero García.", "Antonio Bey Olvera.", "Luis Álvarez Duarte."] },
+            { q: "¿Qué cofradía fue la pionera en estrenar un paso dorado neobarroco en San Fernando en 1960?", a: "Los Estudiantes (Afligidos).", e: ["La Misericordia.", "La Expiración.", "La Columna."] },
+            { q: "¿A qué hermandad concedió el rey Alfonso XIII el título de Real en 1923?", a: "A la Divina Pastora.", e: ["Al Nazareno.", "A la Vera Cruz.", "Al Carmen."] },
+            { q: "¿Cuál es la hermandad más antigua de la ciudad entre las subsistentes (fundada en 1698)?", a: "La Virgen del Carmen.", e: ["La Soledad.", "El Nazareno.", "La Vera Cruz."] },
+            { q: "¿Qué imagen de la Semana Santa isleña es atribuida tradicionalmente por expertos a la escultora Luisa Roldán «La Roldana»?", a: "La Virgen de Gracia y Esperanza (Oración en el Huerto).", e: ["Nuestra Señora de la Soledad.", "La Virgen del Mayor Dolor.", "La Virgen de las Lágrimas."] },
+            { q: "¿Cómo se llamaba el presbítero genovés que importó a San Fernando la imagen original del Cristo Yacente en 1790?", a: "Jácome Parodi Macaggi.", e: ["Ramón Olivera.", "Camilo García Valenzuela.", "Felipe Carrasco."] },
+            { q: "¿En qué parroquia se fundó la Hermandad de la Humildad y Paciencia en 1986?", a: "En la Parroquia de San Servando y San Germán (La Ardila).", e: ["En la Parroquia de la Sagrada Familia (Bazán).", "En la Parroquia de San José Artesano (El Parque).", "En la Iglesia Mayor Parroquial."] },
+            { q: "¿Qué cofradía procesiona con una austeridad extrema, llevando sus penitentes una soga atada a la cintura y sin acompañamiento musical?", a: "El Rosario Doloroso.", e: ["El Perdón.", "La Expiración.", "Los Desamparados."] },
+            { q: "¿En qué año fue coronada canónicamente la imagen neoclásica de la Divina Pastora?", a: "En 2004.", e: ["En 1951.", "En 2006.", "En 1996."] },
+            { q: "¿Qué hermandad sacó en 1985 a su titular en un antiguo paso perteneciente a la Hermandad de Jesús Nazareno?", a: "El Prendimiento.", e: ["La Misericordia.", "El Gran Poder.", "Cristo Rey."] },
+            { q: "¿A qué instituto o congregación religiosa estuvo vinculada desde sus orígenes la cofradía de Cristo Rey (La Borriquita)?", a: "Al Instituto Lasaliano (Hermanos de La Salle).", e: ["A la Orden Franciscana.", "A la Orden Tercera de Servitas.", "A los Carmelitas Descalzos."] },
+            { q: "¿Qué hermandad es conocida vulgarmente como «la del comercio» debido a la profesión de sus fundadores (1954)?", a: "El Ecce Homo.", e: ["La Columna.", "Los Estudiantes.", "La Oración en el Huerto."] },
+            { q: "¿Qué cofradía radicaba originariamente en la parroquia de la Inmaculada Concepción y realiza un Vía Crucis procesional?", a: "El Perdón.", e: ["El Rosario Doloroso.", "La Humildad y Paciencia.", "El Gran Poder."] },
+            { q: "¿Cuál fue la primera cofradía de penitencia isleña presidida por una mujer?", a: "La Expiración.", e: ["La Soledad.", "La Pastora.", "El Carmen."] },
+            { q: "¿Qué cofradía de la barriada Bazán cruza un puente que actualmente recibe el título oficial de su sagrado titular?", a: "El Gran Poder.", e: ["La Humildad y Paciencia.", "El Prendimiento.", "La Sagrada Resurrección."] },
+            { q: "¿Cuál fue la primera hermandad en abandonar el templete clásico y sacar a su Virgen en un paso de palio estilo sevillano (1939)?", a: "La Columna (Virgen de las Lágrimas).", e: ["La Soledad.", "Los Estudiantes.", "La Expiración."] },
+            { q: "¿Qué cofradía de gloria fue fundada a finales de los 90 y fue amadrinada por Puerto Real para ser filial en 2006?", a: "La Hermandad del Rocío.", e: ["La Hermandad del Carmen.", "La Asociación Josefina.", "La Hermandad de la Divina Pastora."] },
+            { q: "¿En qué siglo comenzó a tener estrechos y documentados vínculos la Hermandad del Nazareno con el poder municipal?", a: "Siglo XVIII.", e: ["Siglo XIX.", "Siglo XVII.", "Siglo XX."] },
+            { q: "¿Qué corporación basó sus primitivos estatutos (1789) en los de una entidad homónima establecida en la parroquia del Rosario de Cádiz?", a: "La Congregación de Esclavos de San José.", e: ["La Hermandad del Ecce Homo.", "La Hermandad de la Misericordia.", "La Orden Tercera de Servitas."] },
+            { q: "¿Quién fue el escultor isleño del grupo escultórico inicial de la Virgen de la Caridad en 1943?", a: "Antonio Bey Olvera.", e: ["Alfonso Berraquero García.", "Antonio Castillo Lastrucci.", "Luis Álvarez Duarte."] },
+            { q: "¿Qué miembro de la realeza fue nombrado Prioste de Honor de la Hermandad de la Soledad en 1975?", a: "S.M. el Rey Juan Carlos I.", e: ["S.M. el Rey Alfonso XII.", "S.M. el Rey Alfonso XIII.", "S.M. el Rey Fernando VII."] },
+            { q: "¿Qué hermandad isleña organiza desde 1976 una devota procesión conocida como el 'Corpus chiquito' por su barrio?", a: "La Misericordia.", e: ["El Gran Poder.", "La Caridad.", "La Expiración."] },
+            { q: "¿Qué hermandad sacaba tras el paso del Señor una centuria de soldados romanos durante varias décadas a partir de 1916?", a: "La Columna.", e: ["El Ecce Homo.", "El Prendimiento.", "El Santo Entierro."] },
+            { q: "¿Qué cofradía organizaba un prestigioso certamen literario para jóvenes a nivel nacional llamado premio «Padre José María Franco»?", a: "Los Estudiantes (Afligidos).", e: ["Cristo Rey.", "La Oración en el Huerto.", "El Gran Poder."] },
+            { q: "¿Qué cofradía rindió culto y procesionó a una antigua Virgen de las Mercedes reformada como dolorosa entre 1985 y 1997?", a: "Los Desamparados.", e: ["La Caridad.", "La Columna.", "El Rosario Doloroso."] },
+            { q: "¿Cuál es el lema latino que figura en el sudario del escudo de la Hermandad de la Soledad?", a: "Stabat Mater.", e: ["Sin cruz no hay gloria ninguna.", "Rezad el rosario.", "Iuxta Crucem."] },
+            { q: "¿Qué título cristífero adoptó oficialmente la Hermandad de la Soledad al renovar sus reglas en 1909?", a: "Descendimiento de Nuestro Señor Jesucristo.", e: ["Santo Entierro de Nuestro Señor Jesucristo.", "Traslado al Sepulcro de Cristo.", "Divina Misericordia del Señor."] },
+            { q: "¿Qué escultor restauró profundamente la imagen del Cristo de la Redención (Soledad) en el año 1999?", a: "Juan Manuel Miñarro López.", e: ["Alfonso Berraquero García.", "Luis Álvarez Duarte.", "Antonio Castillo Lastrucci."] },
+            { q: "¿Desde qué año el municipio de San Fernando rinde la función del Voto a San José como patrón debido a una epidemia de fiebre amarilla?", a: "1800.", e: ["1766.", "1802.", "1789."] },
+            { q: "¿Cuál fue la primera cofradía isleña fundada inmediatamente tras la Guerra Civil en 1939?", a: "Los Estudiantes (Afligidos).", e: ["La Caridad.", "Medinaceli.", "La Oración en el Huerto."] },
+            { q: "¿A qué afamada devoción intentaba imitar el origen de la hermandad de Medinaceli de San Fernando?", a: "A la imagen del convento de capuchinos de Madrid.", e: ["A Jesús del Gran Poder de Sevilla.", "Al Cristo de los Alabarderos.", "A Nuestro Padre Jesús Nazareno."] },
+            { q: "¿Qué hermandad sacó por primera vez en San Fernando un sobrio paso de palio de estilo «cajón» con malla dorada?", a: "El Gran Poder (Virgen de la Trinidad).", e: ["La Soledad.", "Los Desamparados.", "El Prendimiento."] },
+            { q: "¿En qué hermandad procesiona el pasaje evangélico de la Presentación al Pueblo de Pilato?", a: "El Ecce Homo.", e: ["La Columna.", "La Misericordia.", "El Prendimiento."] },
+            { q: "¿Quiénes integraban y gobernaban la peculiar Hermandad del Resucitado surgida en la posguerra (1947-1952)?", a: "Los obreros cargadores de los pasos.", e: ["Los estudiantes lasalianos.", "Los comerciantes y mercaderes.", "Los militares de Infantería de Marina."] },
+            { q: "¿A qué hermandad pertenece históricamente la antigua imagen de Jesús de las Lágrimas, actualmente en la Divina Pastora?", a: "A la Misericordia.", e: ["Al Nazareno.", "A los Estudiantes.", "A la Oración en el Huerto."] },
+            { q: "¿En qué año fue aprobada la Hermandad del Santísimo Cristo de la Vera Cruz constituida en el barrio del Monte?", a: "1784.", e: ["1810.", "1891.", "1759."] },
+            { q: "¿Quién fue el primer hermano mayor del Nazareno, montañés natural del valle de Ibio-Mazcuerras?", a: "Pedro Guerra Calderón.", e: ["Diego Lopez Tagle.", "Román Terán.", "Domingo de los Hoyos."] },
+            { q: "¿Qué cofradía contó con miembros ilustres de la Real Armada en su fundación, siendo su primer prioste el jefe de escuadra Pedro de Cárdenas?", a: "La Expiración.", e: ["El Carmen.", "El Santo Entierro.", "La Vera Cruz."] },
+            { q: "Además de su misterio doloroso, ¿qué antigua imagen letífica del hospicio venera la cofradía de la Caridad?", a: "La Virgen de los Remedios.", e: ["La Virgen de las Mercedes.", "La Virgen del Carmen.", "La Virgen de los Ángeles."] },
+            { q: "¿En la sede canónica de qué hermandad sucedieron los juramentos inmortalizados por Casado del Alisal en las Cortes de 1810?", a: "En la de la Soledad (Iglesia Mayor San Pedro y San Pablo).", e: ["En la de la Pastora.", "En la de Vera Cruz.", "En la del Carmen."] },
+            { q: "¿Qué hermandad tuvo como primer titular en 1939 a un 'Jesús de los Afligidos' procedente de la extinta capilla del Zaporito?", a: "Los Estudiantes.", e: ["Cristo Rey.", "El Gran Poder.", "La Misericordia."] },
+            { q: "¿Qué misterio isleño fue completado paulatinamente y hoy incluye a San Pedro, Santiago y a un soldado del Sanedrín?", a: "El Prendimiento.", e: ["La Columna.", "La Expiración.", "La Oración en el Huerto."] },
+            { q: "¿En qué zona o barrio periférico se erigió la moderna parroquia de San Servando y San Germán?", a: "La Ardila o Blas Infante.", e: ["La Casería de Ossio.", "La Bazán.", "El Parque Almirante Laulhé."] },
+            { q: "¿Quién talló de manera magistral entre 1994 y 1996 el actual grupo escultórico de Cristo Rey en su Entrada en Jerusalén (La Borriquita)?", a: "Juan Manuel Miñarro López.", e: ["Salvador García Piñero.", "Tomás Chaveli.", "Alfonso Berraquero."] },
+            { q: "¿Cuál es el origen de la imagen de María Salomé de la Soledad (reformada por Berraquero en 1986)?", a: "Era la antigua Virgen de los Dolores de Lepe.", e: ["Era la antigua Virgen de la Piedad de Cádiz.", "Era una antigua imagen de San José deshechada.", "Era una Magdalena olvidada por los Servitas."] },
+            { q: "¿Qué corporación organizaba en el pasado un prolongado receso a mitad de su itinerario dentro de la Iglesia Mayor Parroquial?", a: "La Vera Cruz.", e: ["La Soledad.", "El Nazareno.", "La Expiración."] },
+            { q: "¿Quién labró la nueva imagen del titular de la Hermandad de la Sagrada Resurrección bendecida en el año 2006?", a: "Alfonso Berraquero.", e: ["Antonio Dubé de Luque.", "Luis González Rey.", "Juan Carlos García Díaz."] },
+            { q: "¿Los penitentes de qué cofradía isleña visten hoy en día túnica y antifaz crema con capa y cíngulo rojo oscuro?", a: "El Ecce Homo.", e: ["La Columna.", "El Prendimiento.", "Los Estudiantes."] },
+            { q: "¿En qué hermandad se levantó y bendijo un vistoso retablo neobarroco tallado por Guzmán Bejarano en el año 1959?", a: "Medinaceli.", e: ["La Misericordia.", "Los Afligidos.", "La Expiración."] },
+            { q: "¿Cuál es la cofradía que ostenta históricamente el título del Tercio del Sur de Infantería de Marina como Hermano Honorario?", a: "El Perdón.", e: ["La Misericordia.", "La Expiración.", "La Caridad."] },
+            { q: "¿Qué hermandad amadrinó a la asociación rociera de San Fernando en 2006 para ser filial de Almonte?", a: "La Hermandad de Puerto Real.", e: ["La Hermandad de Jerez.", "La Hermandad de Cádiz.", "La Hermandad de Chiclana."] },
+            { q: "¿Qué cofradía portaba en sus inicios unas características cruces de penitencia en sus manos en lugar de los tradicionales cirios de luz?", a: "El Perdón.", e: ["La Expiración.", "El Rosario Doloroso.", "Los Desamparados."] },
+            { q: "¿En el paso de misterio de qué cofradía figuran personajes secundarios como Barrabás, Claudia Prócula y un esclavo etíope?", a: "En el Ecce Homo.", e: ["En el Prendimiento.", "En la Columna.", "En los Afligidos."] },
+            { q: "¿En qué año se produjo la desamortización exclaustradora del convento que paralizó bruscamente a la hermandad del Carmen?", a: "En 1835.", e: ["En 1769.", "En 1873.", "En 1931."] },
+            { q: "¿Qué fraile capuchino propulsó la advocación a la Divina Pastora en la Isla de León tras sus predicaciones de 1781?", a: "Fray Diego José de Cádiz.", e: ["Fray Isidoro de Sevilla.", "Fray Tomás del Valle.", "Fray Cayetano Quijada."] },
+            { q: "¿A qué imagen donó una valiosa diadema de plata el gobernador de la Isla Diego de Molina y Carvajal en 1773?", a: "A la Virgen de la Soledad.", e: ["A la Virgen del Carmen.", "A la Virgen de los Dolores.", "A la Divina Pastora."] },
+            { q: "¿Qué escultor valenciano fue el autor original de la talla de la Virgen de las Lágrimas (Columna) en 1899?", a: "Vicente Tena.", e: ["Antonio Castillo Lastrucci.", "Sebastián Santos.", "Samuel Howe."] },
+            { q: "¿De qué parroquia se vio precisada a salir finalmente la cofradía de la Sagrada Resurrección en su primera procesión oficial de 2005?", a: "De la Parroquia de San José Artesano.", e: ["De la Iglesia Mayor Parroquial.", "De la Iglesia Conventual del Carmen.", "De la Iglesia de la Pastora."] },
+            { q: "¿En qué año talló Castillo Lastrucci las imágenes originales de la Verónica y el Simón Cireneo para el misterio de la Misericordia?", a: "En 1966.", e: ["En 1957.", "En 1975.", "En 1982."] },
+            { q: "¿Qué hermandad penitencial organiza cada 2 de agosto una procesión de gloria por la barriada Bazán?", a: "El Gran Poder (con la Virgen de los Ángeles).", e: ["La Humildad y Paciencia.", "La Pastora.", "El Rocío."] },
+            { q: "¿Con qué orden mendicante mantiene una especial 'carta de hermandad' la cofradía de Medinaceli desde 1988?", a: "Con la Orden Franciscana Capuchina.", e: ["Con los Carmelitas Descalzos.", "Con los Hermanos de La Salle.", "Con la Tercera Orden de los Servitas."] },
+            { q: "¿Cuál era considerada oficiosamente la «procesión oficial» de la Semana Santa local a la que acudían representaciones militares a partir de 1942?", a: "El Santo Entierro.", e: ["La Soledad.", "El Nazareno.", "La Resurrección."] },
+            { q: "¿Qué dolorosa se vio inmersa en un pleito en 1993 donde la justicia obligó a restituirla a su estado original deshaciendo su restauración?", a: "La Virgen de la Caridad.", e: ["La Virgen del Buen Fin.", "La Virgen de la Trinidad.", "La Virgen del Mayor Dolor en su Soledad."] },
+            { q: "¿Qué cofradía isleña luce en la zona central de su emblema una Cruz de Penitencia recubierta con un sudario con forma de letra 'M'?", a: "La Soledad.", e: ["La Vera Cruz.", "La Expiración.", "El Descendimiento."] },
+            { q: "¿Con qué famosa cofradía sevillana comparte expresamente la advocación de Nuestro Padre Jesús del Soberano Poder la hermandad del Prendimiento?", a: "Con la hermandad de San Benito.", e: ["Con la hermandad de los Panaderos.", "Con la hermandad de la Macarena.", "Con la hermandad del Gran Poder."] },
+            { q: "¿Qué obra de artesanía construyó el afamado taller de Angulo de Lucena para la titular de la Soledad en 1954?", a: "Una Diadema de Plata para la Virgen.", e: ["Un paso completamente plateado.", "Unos candelabros de cola repujados.", "Una portentosa cruz de guía."] },
+            { q: "¿A qué hermandad se refería un artículo histórico al recordar que en el franquismo algunos alcaldes compaginaban su rol municipal con el de Hermano Mayor?", a: "A la Hermandad del Nazareno.", e: ["A la Hermandad de la Expiración.", "A la Hermandad del Carmen.", "A la Hermandad del Santo Entierro."] },
+            { q: "¿Qué imagen mariana de candelero del Misterio de la Soledad transmite 'tranquilidad' según los expertos y fue donada a Berraquero?", a: "María Salomé.", e: ["María de Cleofás.", "Santa Marta.", "María Magdalena."] },
+            { q: "¿Dónde se ubicaba la antigua capilla construida en 1789 que rendía devoción original al Señor de la Humildad (Varón de Dolores)?", a: "En la zona del Zaporito.", e: ["Cerca del antiguo Mesón del Duque.", "En el Barrio del Monte.", "En los terrenos anexos al Hospital de San José."] },
+            { q: "¿Qué veterana asociación cultural isleña fue la que originó e impulsó la idea de fundar la actual hermandad de la Resurrección?", a: "La Venera.", e: ["Juven-Pas.", "El Güichi de Carlos.", "Patrimonio La Isla."] },
+            { q: "¿En qué hermandad procesiona Santa Marta como talla secundaria, obra de Juan Carlos García Díaz en 2001?", a: "En la Caridad.", e: ["En la Soledad.", "En la Misericordia.", "En los Afligidos."] },
+            { q: "¿Con qué extinguida cofradía mantuvo pleitos de precedencia y antigüedad en el siglo XVIII la Hermandad de la Virgen del Carmen?", a: "Con la antigua Hermandad de Nuestra Señora del Rosario (del Castillo).", e: ["Con la Hermandad de la Soledad.", "Con la Orden Tercera de Servitas.", "Con la Hermandad del Nazareno."] },
+            { q: "¿A qué Virgen isleña se le bordó en 1910 un valioso manto de salida que la imagen titular sigue conservando?", a: "A la Divina Pastora.", e: ["A la Virgen de la Soledad.", "A la Virgen del Carmen.", "A la Virgen de las Lágrimas."] },
+            { q: "¿Qué paso de talla neobarroca fue adquirido por la Hermandad de la Soledad en 1985 a la hermandad homónima del pueblo sevillano de Paradas?", a: "El de su paso de Misterio de Traslado al Sepulcro.", e: ["El del Ecce Homo.", "El de la Misericordia.", "El del Cristo de la Sangre."] },
+            { q: "¿En qué año fue erigida formal y canónicamente por el Obispado la Hermandad de los Estudiantes (Afligidos)?", a: "En 1944.", e: ["En 1939.", "En 1942.", "En 1950."] },
+            { q: "Según los historiadores de la ciudad, ¿cómo definen el funcionamiento originario de la hermandad del Nazareno impulsada por montañeses?", a: "De naturaleza gremial, cerrada y excluyente.", e: ["Aperturista y cívica con todos los estratos.", "Humilde, penitencial y austera.", "Eminentemente eclesiástica y nobiliaria."] },
+            { q: "¿Qué advocación gloriosa ostenta formalmente los honores militares de Capitán General de la Armada en San Fernando?", a: "La Virgen del Carmen.", e: ["La Divina Pastora.", "La Virgen de los Desamparados.", "La Virgen de la Esperanza."] },
+            { q: "¿En qué céntrica calle isleña posee la cofradía de la Soledad su antiquísima Casa de Hermandad desde hace siglos tras sortear desamortizaciones?", a: "En la antigua calle del Óleo (actual callejón Virgen de la Soledad).", e: ["En la calle de Las Siete Revueltas.", "En la plaza de la Iglesia Mayor.", "En la calle Constructora Naval."] },
+            { q: "¿De dónde procedía la imagen anónima del Nazareno (Cristo del Buen Viaje) que la cofradía de la Misericordia adaptó con Lastrucci?", a: "Se veneraba desde tiempo inmemorial en una capilla lateral de la iglesia de la Pastora.", e: ["Fue comprada en unos prestigiosos talleres de Génova.", "Fue donada generosamente por un alto mando militar de San Carlos.", "Se encontró milagrosamente en un convento abandonado tras la epidemia."] },
+            { q: "¿Qué dos imágenes, en sus orígenes, fueron erigidas como cotitulares formales tras una iniciativa de obreros de la Carraca en 1893?", a: "Santísimo Señor de la Columna y Nuestra Señora de las Lágrimas.", e: ["Señor de los Afligidos y Virgen de la Amargura.", "Señor del Ecce Homo y Nuestra Señora de la Salud.", "Señor Orando en el Huerto y Virgen de Gracia y Esperanza."] },
+            { q: "¿Bajo qué específica advocación operaba la modesta Orden Tercera fundada en 1759 antes de fusionarse con la cofradía Mater Amabilis?", a: "Orden de Servitas de Nuestra Señora de los Dolores.", e: ["Orden de Servitas de Nuestra Señora del Mayor Dolor.", "Orden de Servitas de la Soledad.", "Orden de Servitas de la Piedad."] },
+            { q: "¿Qué hermandad formó en sus orígenes una agrupación piadosa denominada 'Nuestra Madre y Señora la Virgen de las Angustias en la Sagrada Mortaja'?", a: "La Caridad.", e: ["Los Desamparados.", "El Santo Entierro.", "La Soledad."] },
+            { q: "¿En la década de qué año organizó la hermandad de Afligidos un histórico concurso de saetas (primero en San Fernando)?", a: "En la década de 1940.", e: ["En la de 1970.", "En la de 1930.", "En la de 1960."] },
+            { q: "¿Qué hermano mayor lideró a la hermandad de la Soledad hacia 1940 salvándola de una crisis con un cambio radical en la forma de procesionar?", a: "José Antonio de Ory Zúñiga.", e: ["Manuel Oliva Bascón.", "Antonio Padilla Rosado.", "Rafael Sánchez San Jorge."] },
+            { q: "Históricamente, en la época de esplendor de la Carrera Oficial de la Calle Rosario (1968), ¿quién organizaba y cobraba las sillas para sentarse a ver los pasos?", a: "La Sociedad de Fomento.", e: ["El Consejo de Hermandades y Cofradías.", "El Ayuntamiento de la ciudad.", "La Iglesia Mayor Parroquial."] }
+        ];
+
+        let trivialJugadores = [];
+        let trivialRondaActual = 1;
+        let trivialTurnoActual = 0;
+        let trivialOrdenDeJuego = [];
+        let preguntasDisponibles = [];
+        let preguntaSeleccionada = null;
+        let opcionesActuales = [];
+
+        function iniciarTrivial(nombres) {
+            trivialJugadores = nombres.map(n => ({ nombre: n, puntos: 0 }));
+            trivialRondaActual = 1;
+            
+            // Barajamos el banco de preguntas para esta partida
+            preguntasDisponibles = [...bancoPreguntasTrivial].sort(() => Math.random() - 0.5);
+
+            // Determinamos el jugador inicial al azar
+            const numJugadores = trivialJugadores.length;
+            const inicioAzar = Math.floor(Math.random() * numJugadores);
+            
+            // Creamos el orden de juego (ej: si empieza el 2, el orden es 2, 3, 0, 1)
+            trivialOrdenDeJuego = [];
+            for(let i = 0; i < numJugadores; i++) {
+                trivialOrdenDeJuego.push((inicioAzar + i) % numJugadores);
+            }
+            
+            trivialTurnoActual = 0;
+            mostrarPantallaTrivial();
+        }
+
+        function mostrarPantallaTrivial() {
+            const contenedor = document.getElementById('juegosContenido');
+            const indexJugador = trivialOrdenDeJuego[trivialTurnoActual];
+            const jugadorActual = trivialJugadores[indexJugador];
+
+            // Sacar una pregunta del pool
+            preguntaSeleccionada = preguntasDisponibles.pop();
+            
+            // Mezclar opciones
+            opcionesActuales = [preguntaSeleccionada.a, ...preguntaSeleccionada.e];
+            opcionesActuales.sort(() => Math.random() - 0.5);
+
+            let opcionesHTML = '';
+            opcionesActuales.forEach((opcion, i) => {
+                opcionesHTML += `
+                    <button id="btnOpcion${i}" onclick="seleccionarRespuesta(${i})" class="w-full bg-gray-700 text-white text-left p-4 rounded-xl shadow border border-gray-600 hover:bg-blue-600 transition text-sm md:text-base">
+                        ${opcion}
+                    </button>
+                `;
+            });
+
+            contenedor.innerHTML = `
+                <div class="w-full max-w-lg flex flex-col gap-4 fade-in">
+                    <div class="flex justify-between items-center bg-gray-800 p-3 rounded-xl border border-gray-700">
+                        <span class="text-blue-400 font-bold uppercase text-sm tracking-widest">Ronda ${trivialRondaActual} de 5</span>
+                        <span class="text-white font-bold">${jugadorActual.nombre}</span>
+                    </div>
+                    
+                    <div class="bg-blue-900 text-white p-6 rounded-2xl shadow-inner border border-blue-700 mb-2">
+                        <p class="text-lg md:text-xl font-bold leading-snug">${preguntaSeleccionada.q}</p>
+                    </div>
+
+                    <div class="flex flex-col gap-3" id="contenedorOpciones">
+                        ${opcionesHTML}
+                    </div>
+
+                    <div id="contenedorContinuar" class="hidden mt-4">
+                        <button onclick="siguienteTurnoTrivial()" class="w-full bg-amber-500 text-gray-900 font-bold py-4 rounded-xl shadow-lg hover:bg-amber-400 transition active:scale-95 text-lg">
+                            Siguiente
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function seleccionarRespuesta(indexSeleccionado) {
+            const indexJugador = trivialOrdenDeJuego[trivialTurnoActual];
+            const textoSeleccionado = opcionesActuales[indexSeleccionado];
+            const esCorrecta = (textoSeleccionado === preguntaSeleccionada.a);
+
+            // Bloquear botones
+            for(let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`btnOpcion${i}`);
+                btn.onclick = null; // deshabilitar
+                btn.classList.remove('hover:bg-blue-600', 'bg-gray-700');
+                
+                if (opcionesActuales[i] === preguntaSeleccionada.a) {
+                    btn.classList.add('bg-green-600', 'border-green-400'); // La correcta siempre en verde
+                } else if (i === indexSeleccionado && !esCorrecta) {
+                    btn.classList.add('bg-red-600', 'border-red-400'); // La seleccionada incorrecta en rojo
+                } else {
+                    btn.classList.add('bg-gray-800', 'opacity-50'); // El resto atenuadas
+                }
+            }
+
+            if (esCorrecta) {
+                trivialJugadores[indexJugador].puntos += 100;
+            }
+
+            document.getElementById('contenedorContinuar').classList.remove('hidden');
+            document.getElementById('contenedorContinuar').classList.add('fade-in');
+        }
+
+        function siguienteTurnoTrivial() {
+            trivialTurnoActual++;
+            
+            if (trivialTurnoActual >= trivialJugadores.length) {
+                mostrarClasificacionTrivial();
+            } else {
+                mostrarPantallaTrivial();
+            }
+        }
+
+        function mostrarClasificacionTrivial() {
+            const contenedor = document.getElementById('juegosContenido');
+            const esFinal = (trivialRondaActual === 5);
+            
+            // Clonamos y ordenamos por puntuación
+            const ranking = [...trivialJugadores].sort((a, b) => b.puntos - a.puntos);
+            
+            let rankingHTML = '';
+            ranking.forEach((jugador, i) => {
+                let medalla = '';
+                if (esFinal && i === 0) medalla = '🏆';
+                else if (esFinal && i === 1) medalla = '🥈';
+                else if (esFinal && i === 2) medalla = '🥉';
+                else medalla = `<span class="text-gray-500 w-6 text-center inline-block">${i+1}</span>`;
+
+                rankingHTML += `
+                    <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl border ${esFinal && i === 0 ? 'border-amber-400 bg-amber-900/30' : 'border-gray-700'} mb-2">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">${medalla}</span>
+                            <span class="font-bold text-lg text-white">${jugador.nombre}</span>
+                        </div>
+                        <span class="font-black text-amber-400 text-xl">${jugador.puntos} <span class="text-sm text-gray-400">pts</span></span>
+                    </div>
+                `;
+            });
+
+            let tituloHTML = esFinal 
+                ? `<h2 class="text-4xl md:text-5xl font-black text-amber-400 mb-2 leading-tight pop-in text-center">¡${ranking[0].nombre} ha ganado!</h2>
+                   <p class="text-gray-300 text-center mb-6">Resultado Final del Trivial Cofrade</p>`
+                : `<h3 class="text-2xl font-bold text-white mb-2 text-center">Clasificación Parcial</h3>
+                   <p class="text-gray-400 text-center mb-6">Fin de la Ronda ${trivialRondaActual}</p>`;
+
+            let botonHTML = esFinal
+                ? `<button onclick="renderJuegosMenu()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-500 transition active:scale-95 text-lg mt-4">Volver al Menú</button>`
+                : `<button onclick="avanzarRondaTrivial()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg mt-4">Comenzar Ronda ${trivialRondaActual + 1}</button>`;
+
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col fade-in">
+                    ${tituloHTML}
+                    <div class="flex flex-col">
+                        ${rankingHTML}
+                    </div>
+                    ${botonHTML}
+                </div>
+            `;
+        }
+
+        function avanzarRondaTrivial() {
+            trivialRondaActual++;
+            trivialTurnoActual = 0;
+            mostrarPantallaTrivial();
         }
 
         window.onload = function() {
