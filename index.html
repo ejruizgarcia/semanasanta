@@ -13,6 +13,9 @@
         .slide-up {
             animation: slideUp 0.3s ease-out forwards;
         }
+        .pop-in {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -28,6 +31,11 @@
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        @keyframes popIn {
+            0% { transform: scale(0.8) translateY(-20px); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden relative">
@@ -39,6 +47,9 @@
 
     <!-- Marca de agua general -->
     <div class="fixed inset-0 z-0 pointer-events-none opacity-15 bg-[url('https://raw.githubusercontent.com/ejruizgarcia/images/main/cartel.jpg')] bg-cover bg-center"></div>
+
+    <!-- Contenedor de notificaciones flotantes -->
+    <div id="toastContainer" class="fixed top-28 inset-x-0 z-[60] flex flex-col items-center gap-3 pointer-events-none px-4"></div>
 
     <!-- Cabecera fija -->
     <header class="bg-rose-900 text-white pt-4 pb-2 shadow-md z-10 shrink-0 relative">
@@ -99,18 +110,19 @@
         </svg>
     </button>
 
-    <!-- Modal de Detalle (Con fondo transparente para ver la marca de agua) -->
+    <!-- Modal de Detalle -->
     <div id="detalleModal" class="fixed inset-0 z-50 hidden flex-col h-full w-full">
-        <div class="bg-rose-900 text-white p-4 flex items-center shadow-md shrink-0">
-            <button onclick="cerrarDetalle()" class="mr-4 p-2 bg-rose-800 rounded-full hover:bg-rose-700 transition active:scale-95 shrink-0" aria-label="Volver">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            </button>
-            <h2 id="modalTitulo" class="text-xl font-bold truncate">Detalle</h2>
+        <div class="bg-rose-900 text-white p-4 flex justify-between items-center shadow-md shrink-0">
+            <div class="flex items-center min-w-0">
+                <button onclick="cerrarDetalle()" class="mr-4 p-2 bg-rose-800 rounded-full hover:bg-rose-700 transition active:scale-95 shrink-0" aria-label="Volver">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </button>
+                <h2 id="modalTitulo" class="text-xl font-bold truncate">Detalle</h2>
+            </div>
         </div>
         
         <div class="flex-1 overflow-y-auto p-5">
             <div class="max-w-lg mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6 slide-up relative z-10">
-                <!-- Botón X elegante en granate vino -->
                 <button onclick="cerrarDetalle()" class="absolute top-4 right-4 text-rose-900 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-1.5 rounded-full transition active:scale-95" aria-label="Cerrar Ficha">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -165,7 +177,7 @@
         </div>
     </div>
 
-    <!-- Modal de Facebook (Oculta la marca de agua) -->
+    <!-- Modal de Facebook -->
     <div id="fbModal" class="fixed inset-0 bg-white z-50 hidden flex-col h-full w-full">
         <div class="bg-blue-800 text-white p-4 flex items-center shadow-md shrink-0">
             <button onclick="cerrarFb()" class="mr-4 p-2 bg-blue-700 rounded-full hover:bg-blue-600 transition active:scale-95">
@@ -180,6 +192,10 @@
                     <svg class="w-8 h-8 text-blue-600 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
                     <span class="font-bold text-gray-800 text-lg">IslaPasión</span>
                 </a>
+                <a href="https://www.facebook.com/share/1D2s6nfzTH/" target="_blank" class="block w-full bg-white border border-blue-200 p-4 rounded-xl shadow-sm hover:shadow-md transition flex items-center gap-4 group">
+                    <svg class="w-8 h-8 text-blue-600 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                    <span class="font-bold text-gray-800 text-lg">San Fernando Cofrade</span>
+                </a>
                 <a href="https://www.facebook.com/AytoSanFdo?locale=es_ES" target="_blank" class="block w-full bg-white border border-blue-200 p-4 rounded-xl shadow-sm hover:shadow-md transition flex items-center gap-4 group">
                     <svg class="w-8 h-8 text-blue-600 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
                     <span class="font-bold text-gray-800 text-lg">Ayuntamiento de San Fernando</span>
@@ -192,7 +208,7 @@
         </div>
     </div>
 
-    <!-- Modal del Juego del Impostor (Oculta la marca de agua) -->
+    <!-- Modal del Juego del Impostor -->
     <div id="impostorModal" class="fixed inset-0 bg-gray-900 z-50 hidden flex-col h-full w-full text-white">
         <div class="p-4 flex items-center shadow-md shrink-0 bg-gray-800">
             <button onclick="cerrarImpostor()" class="mr-4 p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition active:scale-95">
@@ -250,6 +266,7 @@
 
         let progresoInterval;
         let modalProgresoInterval;
+        const notificados = new Set(); // Guarda los eventos notificados para no repetirlos
 
         const diasOffset = {
             domingo: 0,
@@ -272,9 +289,23 @@
                 offset += 1;
             }
 
-            // Fijamos la referencia temporal: el 29 de Marzo de 2026 fue/será Domingo de Ramos
             const fecha = new Date(2026, 2, 29 + offset, horas, minutos, 0);
             return fecha.getTime();
+        }
+
+        // Sistema de notificaciones flotantes
+        function mostrarNotificacion(mensaje, icono) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'bg-rose-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 pop-in border border-rose-700 max-w-sm w-full';
+            toast.innerHTML = `<span class="text-3xl">${icono}</span><span class="font-bold text-lg leading-tight">${mensaje}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                setTimeout(() => toast.remove(), 500);
+            }, 6000);
         }
 
         function actualizarProgresoLive(barras) {
@@ -298,13 +329,32 @@
 
                 barra.elemento.style.width = porcentaje + '%';
 
-                // Lógica para iluminar el marco si la cofradía está actualmente en la calle
+                // Iluminar si está en la calle
                 if (ahora >= barra.salidaTs && ahora < barra.recogidaTs) {
                     barra.boton.classList.add('ring-2', 'ring-rose-500', 'border-transparent');
                     barra.boton.classList.remove('border-gray-200');
                 } else {
                     barra.boton.classList.remove('ring-2', 'ring-rose-500', 'border-transparent');
                     barra.boton.classList.add('border-gray-200');
+                }
+
+                // Check de notificaciones (ventana de 2 minutos para asegurar que salta en vivo)
+                const windowMs = 120000; 
+
+                // Salida
+                if (!notificados.has(barra.nombre + 'salida') && ahora >= barra.salidaTs && ahora <= barra.salidaTs + windowMs) {
+                    notificados.add(barra.nombre + 'salida');
+                    mostrarNotificacion(`¡${barra.nombre} acaba de salir a la calle!`, '🚪');
+                }
+                // Carrera Oficial
+                if (!notificados.has(barra.nombre + 'co') && ahora >= barra.inicioTs && ahora <= barra.inicioTs + windowMs) {
+                    notificados.add(barra.nombre + 'co');
+                    mostrarNotificacion(`¡${barra.nombre} entra en Carrera Oficial!`, '✨');
+                }
+                // Recogida
+                if (!notificados.has(barra.nombre + 'recogida') && ahora >= barra.recogidaTs && ahora <= barra.recogidaTs + windowMs) {
+                    notificados.add(barra.nombre + 'recogida');
+                    mostrarNotificacion(`¡${barra.nombre} se ha recogido en su templo!`, '⛪');
                 }
             });
         }
@@ -394,6 +444,7 @@
                 contenedor.appendChild(btn);
                 
                 barrasParaActualizar.push({
+                    nombre: cofradia.nombre,
                     boton: btn,
                     elemento: barraFondo,
                     inicioTs: obtenerTimestampAbsoluto(diaActual, cofradia.entradaCO),
@@ -405,6 +456,7 @@
             
             document.getElementById('mainContainer').scrollTop = 0;
             
+            // Ejecutamos una vez de inmediato y luego cada minuto
             actualizarProgresoLive(barrasParaActualizar);
             progresoInterval = setInterval(() => actualizarProgresoLive(barrasParaActualizar), 60000);
         }
@@ -492,6 +544,7 @@
         let impImpostorIndex = -1;
         let impPalabraSecreta = '';
         let impTurnoActual = 0;
+        let impJugadorInicia = '';
 
         function abrirImpostor() {
             const modal = document.getElementById('impostorModal');
@@ -504,6 +557,8 @@
             const modal = document.getElementById('impostorModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex', 'fade-in');
+            // Reseteamos en segundo plano para la próxima vez
+            setTimeout(renderImpostorSetup, 300);
         }
 
         function generarInputsNombres() {
@@ -560,9 +615,16 @@
                 impJugadores.push(nombre);
             }
 
+            iniciarSiguienteRonda();
+        }
+
+        function iniciarSiguienteRonda() {
             impImpostorIndex = Math.floor(Math.random() * impJugadores.length);
             impPalabraSecreta = diccionarioCofrade[Math.floor(Math.random() * diccionarioCofrade.length)];
             impTurnoActual = 0;
+            
+            // Elegir aleatoriamente quién empieza a hablar esta ronda
+            impJugadorInicia = impJugadores[Math.floor(Math.random() * impJugadores.length)];
 
             mostrarTurnoPass();
         }
@@ -636,21 +698,15 @@
                     
                     <div>
                         <h3 class="text-3xl font-bold text-white mb-3">Todos listos</h3>
-                        <p class="text-gray-300">Todos conocen su rol. Que empiece el debate para encontrar al impostor de la cofradía.</p>
+                        <p class="text-gray-300">Que empiece el debate para encontrar al impostor de la cofradía.</p>
+                        <p class="text-xl font-bold text-amber-400 mt-4 border border-amber-500/30 bg-amber-500/10 py-3 rounded-lg">
+                            Empieza a hablar: ${impJugadorInicia}
+                        </p>
                     </div>
 
-                    <button onclick="revelarImpostorFinal()" class="w-full bg-amber-500 text-gray-900 font-bold py-4 rounded-xl shadow-lg hover:bg-amber-400 transition active:scale-95 text-lg mt-4">
+                    <button onclick="revelarImpostorFinal()" class="w-full bg-amber-500 text-gray-900 font-bold py-4 rounded-xl shadow-lg hover:bg-amber-400 transition active:scale-95 text-lg mt-2">
                         Revelar Impostor
                     </button>
-
-                    <div class="w-full flex gap-3 mt-2">
-                        <button onclick="cerrarImpostor()" class="flex-1 bg-gray-700 text-white font-bold py-3 rounded-xl hover:bg-gray-600 transition active:scale-95">
-                            Cerrar
-                        </button>
-                        <button onclick="renderImpostorSetup()" class="flex-1 bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-500 transition active:scale-95">
-                            Nueva Partida
-                        </button>
-                    </div>
                 </div>
             `;
         }
@@ -669,14 +725,13 @@
                         <p class="text-2xl font-bold text-white mb-2">${impPalabraSecreta}</p>
                     </div>
 
-                    <div class="w-full flex gap-3">
-                        <button onclick="cerrarImpostor()" class="flex-1 bg-gray-700 text-white font-bold py-3 rounded-xl hover:bg-gray-600 transition active:scale-95">
-                            Cerrar
-                        </button>
-                        <button onclick="renderImpostorSetup()" class="flex-1 bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-500 transition active:scale-95">
-                            Nueva Partida
-                        </button>
-                    </div>
+                    <button onclick="iniciarSiguienteRonda()" class="w-full bg-rose-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-rose-500 transition active:scale-95 text-lg">
+                        Siguiente Ronda
+                    </button>
+
+                    <button onclick="cerrarImpostor()" class="w-full text-gray-400 hover:text-white font-bold py-2 transition mt-2">
+                        Terminar Juego
+                    </button>
                 </div>
             `;
         }
@@ -697,7 +752,7 @@
             const fecha = hoy.getDate();
             const hora = hoy.getHours();
             
-            let diaInicial = 'domingo'; // Domingo de Ramos por defecto
+            let diaInicial = 'domingo';
             
             if (mes === 2 && fecha === 30) diaInicial = 'lunes';
             else if (mes === 2 && fecha === 31) diaInicial = 'martes';
@@ -717,3 +772,5 @@
     </script>
 </body>
 </html>
+
+
