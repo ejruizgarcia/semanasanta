@@ -266,7 +266,7 @@
 
         let progresoInterval;
         let modalProgresoInterval;
-        const notificados = new Set(); // Guarda los eventos notificados para no repetirlos
+        const notificados = new Set(); 
 
         const diasOffset = {
             domingo: 0,
@@ -293,7 +293,6 @@
             return fecha.getTime();
         }
 
-        // Sistema de notificaciones flotantes
         function mostrarNotificacion(mensaje, icono) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -329,7 +328,6 @@
 
                 barra.elemento.style.width = porcentaje + '%';
 
-                // Iluminar si está en la calle
                 if (ahora >= barra.salidaTs && ahora < barra.recogidaTs) {
                     barra.boton.classList.add('ring-2', 'ring-rose-500', 'border-transparent');
                     barra.boton.classList.remove('border-gray-200');
@@ -338,20 +336,18 @@
                     barra.boton.classList.add('border-gray-200');
                 }
 
-                // Check de notificaciones (ventana de 2 minutos para asegurar que salta en vivo)
                 const windowMs = 120000; 
 
-                // Salida
                 if (!notificados.has(barra.nombre + 'salida') && ahora >= barra.salidaTs && ahora <= barra.salidaTs + windowMs) {
                     notificados.add(barra.nombre + 'salida');
                     mostrarNotificacion(`¡${barra.nombre} acaba de salir a la calle!`, '🚪');
                 }
-                // Carrera Oficial
+                
                 if (!notificados.has(barra.nombre + 'co') && ahora >= barra.inicioTs && ahora <= barra.inicioTs + windowMs) {
                     notificados.add(barra.nombre + 'co');
                     mostrarNotificacion(`¡${barra.nombre} entra en Carrera Oficial!`, '✨');
                 }
-                // Recogida
+                
                 if (!notificados.has(barra.nombre + 'recogida') && ahora >= barra.recogidaTs && ahora <= barra.recogidaTs + windowMs) {
                     notificados.add(barra.nombre + 'recogida');
                     mostrarNotificacion(`¡${barra.nombre} se ha recogido en su templo!`, '⛪');
@@ -456,7 +452,6 @@
             
             document.getElementById('mainContainer').scrollTop = 0;
             
-            // Ejecutamos una vez de inmediato y luego cada minuto
             actualizarProgresoLive(barrasParaActualizar);
             progresoInterval = setInterval(() => actualizarProgresoLive(barrasParaActualizar), 60000);
         }
@@ -540,6 +535,7 @@
             "Iglesia del Carmen", "Virgen del Carmen", "Rosario", "Campana"
         ];
 
+        let impJugadoresOriginal = [];
         let impJugadores = [];
         let impImpostorIndex = -1;
         let impPalabraSecreta = '';
@@ -557,7 +553,6 @@
             const modal = document.getElementById('impostorModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex', 'fade-in');
-            // Reseteamos en segundo plano para la próxima vez
             setTimeout(renderImpostorSetup, 300);
         }
 
@@ -608,22 +603,24 @@
 
         function iniciarJuegoImpostor() {
             const num = parseInt(document.getElementById('numJugadores').value);
-            impJugadores = [];
+            impJugadoresOriginal = [];
             
             for (let i = 1; i <= num; i++) {
                 const nombre = document.getElementById(`nombreJugador${i}`).value.trim() || `Jugador ${i}`;
-                impJugadores.push(nombre);
+                impJugadoresOriginal.push(nombre);
             }
 
             iniciarSiguienteRonda();
         }
 
         function iniciarSiguienteRonda() {
+            // Barajamos el orden en el que se pasan el móvil para que sea diferente en cada ronda
+            impJugadores = [...impJugadoresOriginal].sort(() => Math.random() - 0.5);
+            
             impImpostorIndex = Math.floor(Math.random() * impJugadores.length);
             impPalabraSecreta = diccionarioCofrade[Math.floor(Math.random() * diccionarioCofrade.length)];
             impTurnoActual = 0;
             
-            // Elegir aleatoriamente quién empieza a hablar esta ronda
             impJugadorInicia = impJugadores[Math.floor(Math.random() * impJugadores.length)];
 
             mostrarTurnoPass();
@@ -700,7 +697,7 @@
                         <h3 class="text-3xl font-bold text-white mb-3">Todos listos</h3>
                         <p class="text-gray-300">Que empiece el debate para encontrar al impostor de la cofradía.</p>
                         <p class="text-xl font-bold text-amber-400 mt-4 border border-amber-500/30 bg-amber-500/10 py-3 rounded-lg">
-                            Empieza a hablar: ${impJugadorInicia}
+                            Empieza a hablar: <span class="text-white">${impJugadorInicia}</span>
                         </p>
                     </div>
 
@@ -737,7 +734,6 @@
         }
 
         window.onload = function() {
-            // Animación de salida del Splash Screen tras 1 segundo
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 if (splash) {
@@ -746,7 +742,6 @@
                 }
             }, 1000);
 
-            // Lógica para detectar el día actual en base al calendario de Semana Santa 2026
             const hoy = new Date();
             const mes = hoy.getMonth(); 
             const fecha = hoy.getDate();
@@ -764,7 +759,6 @@
             }
             else if (mes === 3 && fecha === 5) diaInicial = 'resurreccion';
             
-            // Forzamos un pequeño retraso para asegurar que los estilos de scroll del slider se hayan renderizado
             setTimeout(() => {
                 seleccionarDia(diaInicial);
             }, 100);
