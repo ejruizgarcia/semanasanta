@@ -78,8 +78,8 @@
 
     <!-- Botón Flotante Juego del Impostor -->
     <button onclick="abrirImpostor()" class="fixed bottom-6 right-6 p-4 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 transition active:scale-95 z-40 border-2 border-white" aria-label="Jugar al Impostor">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path>
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2c-3.74 0-6.83 2.8-7.38 6.43L4 10.5V12h16v-1.5l-.62-2.07C18.83 4.8 15.74 2 12 2zm-6.5 11c-2.48 0-4.5 2.02-4.5 4.5S3.02 22 5.5 22 10 19.98 10 17.5c0-.28-.03-.55-.08-.81.65-.43 1.41-.69 2.08-.69s1.43.26 2.08.69c-.05.26-.08.53-.08.81 0 2.48 2.02 4.5 4.5 4.5s4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5c-1.8 0-3.34 1.05-4.08 2.56-.63-.35-1.28-.56-1.92-.56-.64 0-1.29.21-1.92.56C8.84 14.05 7.3 13 5.5 13zm0 2c1.38 0 2.5 1.12 2.5 2.5S6.88 20 5.5 20 3 18.88 3 17.5 4.12 15 5.5 15zm13 0c1.38 0 2.5 1.12 2.5 2.5S19.88 20 18.5 20 16 18.88 16 17.5 17.12 15 18.5 15z"/>
         </svg>
     </button>
 
@@ -395,7 +395,14 @@
             "Torrija", "Mantilla", "Nazareno", "Cruz de Guía", "Paso de palio", 
             "Paso de misterio", "Saeta", "Candelabro", "Faja", "Costal", 
             "Llamador", "Banda de música", "Penitente", "Bambalina", "Tortillita de camarones",
-            "IslaPasión", "La Venera", "Chicotá"
+            "IslaPasión", "La Venera", "Calle Real", "Carga isleña", "Almohada", 
+            "Palo", "Aguaor", "Cirial", "Pértiga", "Inciensario", "Naveta", 
+            "Bocina", "Estandarte", "Senatus", "Libro de Reglas", "Simpecado", 
+            "Canastilla", "Respiradero", "Faldón", "Varal", "Manto", "Corona", 
+            "Potencias", "Túnica", "Cíngulo", "Cirio", "Hachón", "Hermano Mayor", 
+            "Pregón", "Vía Crucis", "Diputado de tramo", "Calle Ancha", 
+            "Plaza de la Pastora", "Siete Revueltas", "Callejón de Ánimas", 
+            "Iglesia del Carmen", "Virgen del Carmen", "Rosario", "Campana"
         ];
 
         let impJugadores = [];
@@ -541,12 +548,42 @@
             const contenedor = document.getElementById('impostorContenido');
             
             contenedor.innerHTML = `
-                <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
+                <div class="w-full max-w-sm flex flex-col items-center gap-6 fade-in text-center">
                     <svg class="w-24 h-24 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
                     
                     <div>
                         <h3 class="text-3xl font-bold text-white mb-3">Todos listos</h3>
                         <p class="text-gray-300">Todos conocen su rol. Que empiece el debate para encontrar al impostor de la cofradía.</p>
+                    </div>
+
+                    <button onclick="revelarImpostorFinal()" class="w-full bg-amber-500 text-gray-900 font-bold py-4 rounded-xl shadow-lg hover:bg-amber-400 transition active:scale-95 text-lg mt-4">
+                        Revelar Impostor
+                    </button>
+
+                    <div class="w-full flex gap-3 mt-2">
+                        <button onclick="cerrarImpostor()" class="flex-1 bg-gray-700 text-white font-bold py-3 rounded-xl hover:bg-gray-600 transition active:scale-95">
+                            Cerrar
+                        </button>
+                        <button onclick="renderImpostorSetup()" class="flex-1 bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-500 transition active:scale-95">
+                            Nueva Partida
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function revelarImpostorFinal() {
+            const contenedor = document.getElementById('impostorContenido');
+            const nombreImpostor = impJugadores[impImpostorIndex];
+            
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
+                    <div class="bg-gray-800 p-8 rounded-2xl border border-rose-700 w-full shadow-inner">
+                        <p class="text-gray-400 uppercase tracking-widest text-sm mb-1">El impostor era...</p>
+                        <p class="text-4xl font-bold text-rose-500 mb-6">${nombreImpostor}</p>
+                        
+                        <p class="text-gray-400 uppercase tracking-widest text-sm mb-1 border-t border-gray-700 pt-6">La palabra secreta era</p>
+                        <p class="text-2xl font-bold text-white mb-2">${impPalabraSecreta}</p>
                     </div>
 
                     <div class="w-full flex gap-3">
