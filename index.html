@@ -117,7 +117,17 @@
 
                 <div class="border-b border-gray-100 pb-4 pr-8">
                     <p class="text-sm text-gray-500 uppercase font-semibold tracking-wider mb-1">Sede Canónica</p>
-                    <p id="modalSede" class="text-lg text-gray-800 font-medium"></p>
+                    <p id="modalSede" class="text-lg text-gray-800 font-medium mb-4"></p>
+                    
+                    <div class="w-full">
+                        <div class="flex justify-between text-xs text-rose-800 font-bold mb-1">
+                            <span>Progreso en la calle</span>
+                            <span id="modalProgresoTexto">0%</span>
+                        </div>
+                        <div class="w-full bg-rose-100 rounded-full h-2.5 overflow-hidden shadow-inner">
+                            <div id="modalProgressBar" class="bg-rose-600 h-2.5 rounded-full transition-all duration-1000 ease-linear" style="width: 0%"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -239,6 +249,7 @@
         };
 
         let progresoInterval;
+        let modalProgresoInterval;
 
         const diasOffset = {
             domingo: 0,
@@ -286,6 +297,15 @@
                 }
 
                 barra.elemento.style.width = porcentaje + '%';
+
+                // Lógica para iluminar el marco si la cofradía está actualmente en la calle
+                if (ahora >= barra.salidaTs && ahora < barra.recogidaTs) {
+                    barra.boton.classList.add('ring-2', 'ring-rose-500', 'border-transparent');
+                    barra.boton.classList.remove('border-gray-200');
+                } else {
+                    barra.boton.classList.remove('ring-2', 'ring-rose-500', 'border-transparent');
+                    barra.boton.classList.add('border-gray-200');
+                }
             });
         }
 
@@ -377,7 +397,9 @@
                     boton: btn,
                     elemento: barraFondo,
                     inicioTs: obtenerTimestampAbsoluto(diaActual, cofradia.entradaCO),
-                    finTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCO)
+                    finTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCO),
+                    salidaTs: obtenerTimestampAbsoluto(diaActual, cofradia.salida),
+                    recogidaTs: obtenerTimestampAbsoluto(diaActual, cofradia.recogida)
                 });
             });
             
@@ -385,6 +407,25 @@
             
             actualizarProgresoLive(barrasParaActualizar);
             progresoInterval = setInterval(() => actualizarProgresoLive(barrasParaActualizar), 60000);
+        }
+
+        function actualizarModalProgreso(inicio, fin) {
+            const ahora = Date.now();
+            let porcentaje = 0;
+            const bar = document.getElementById('modalProgressBar');
+            const txt = document.getElementById('modalProgresoTexto');
+
+            if (ahora >= fin) {
+                porcentaje = 100;
+                txt.innerText = "Recogida";
+            } else if (ahora <= inicio) {
+                porcentaje = 0;
+                txt.innerText = "En el templo";
+            } else {
+                porcentaje = ((ahora - inicio) / (fin - inicio)) * 100;
+                txt.innerText = Math.round(porcentaje) + "%";
+            }
+            bar.style.width = porcentaje + '%';
         }
 
         function mostrarDetalle(dia, index) {
@@ -398,6 +439,13 @@
             document.getElementById('modalSalidaCO').innerText = cofradia.salidaCO;
             document.getElementById('modalItinerario').innerText = cofradia.itinerario;
             
+            const inicioTs = obtenerTimestampAbsoluto(dia, cofradia.salida);
+            const finTs = obtenerTimestampAbsoluto(dia, cofradia.recogida);
+            
+            actualizarModalProgreso(inicioTs, finTs);
+            if (modalProgresoInterval) clearInterval(modalProgresoInterval);
+            modalProgresoInterval = setInterval(() => actualizarModalProgreso(inicioTs, finTs), 60000);
+
             const modal = document.getElementById('detalleModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex', 'fade-in');
@@ -407,6 +455,7 @@
             const modal = document.getElementById('detalleModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex', 'fade-in');
+            if (modalProgresoInterval) clearInterval(modalProgresoInterval);
         }
 
         function abrirFb() {
