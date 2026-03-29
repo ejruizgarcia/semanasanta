@@ -633,14 +633,14 @@
         }
 
         window.onload = function() {
-            // Animación de salida del Splash Screen tras 2 segundos
+            // Animación de salida del Splash Screen tras 1 segundo
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 if (splash) {
                     splash.classList.add('opacity-0');
                     setTimeout(() => splash.classList.add('hidden'), 500);
                 }
-            }, 2000);
+            }, 1000);
 
             // Lógica para detectar el día actual en base al calendario de Semana Santa 2026
             const hoy = new Date();
