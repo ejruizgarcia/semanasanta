@@ -358,6 +358,13 @@
         let modalProgresoInterval;
         const notificados = new Set(); 
 
+        const ordenDiasGestos = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'madrugada', 'viernes', 'resurreccion'];
+        let diaActualGestos = 'domingo';
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let touchendX = 0;
+        let touchendY = 0;
+
         const diasOffset = {
             domingo: 0,
             lunes: 1,
@@ -459,6 +466,7 @@
         }
 
         function seleccionarDia(dia) {
+            diaActualGestos = dia;
             document.querySelectorAll('.dia-btn').forEach(btn => {
                 if (btn.dataset.dia === dia) {
                     btn.classList.remove('bg-rose-800', 'text-rose-100', 'hover:bg-rose-700');
@@ -1191,7 +1199,59 @@
             flujoTrivialTurno();
         }
 
+        function manejarGestoDeslizamiento() {
+            const deltaX = touchendX - touchstartX;
+            const deltaY = touchendY - touchstartY;
+
+            // Nos aseguramos de que el movimiento es mayormente horizontal y supera un mínimo
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 45) {
+                const currentIndex = ordenDiasGestos.indexOf(diaActualGestos);
+                
+                if (deltaX < 0 && currentIndex < ordenDiasGestos.length - 1) {
+                    seleccionarDia(ordenDiasGestos[currentIndex + 1]);
+                } else if (deltaX > 0 && currentIndex > 0) {
+                    seleccionarDia(ordenDiasGestos[currentIndex - 1]);
+                }
+            }
+        }
+
+        function inicializarGestos() {
+            const contenedor = document.getElementById('mainContainer');
+            
+            contenedor.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+                touchstartY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            contenedor.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                touchendY = e.changedTouches[0].screenY;
+                manejarGestoDeslizamiento();
+            }, { passive: true });
+            
+            let arrastrando = false;
+            contenedor.addEventListener('mousedown', e => {
+                arrastrando = true;
+                touchstartX = e.clientX;
+                touchstartY = e.clientY;
+            });
+            
+            contenedor.addEventListener('mouseup', e => {
+                if (!arrastrando) return;
+                arrastrando = false;
+                touchendX = e.clientX;
+                touchendY = e.clientY;
+                manejarGestoDeslizamiento();
+            });
+            
+            contenedor.addEventListener('mouseleave', () => {
+                arrastrando = false;
+            });
+        }
+
         window.onload = function() {
+            inicializarGestos();
+            
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 if (splash) {
