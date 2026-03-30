@@ -127,6 +127,11 @@
         <div id="listaCofradias" class="flex flex-col gap-4 max-w-lg mx-auto pb-6">
             <!-- Los botones se inyectan aquí con JS -->
         </div>
+        
+        <div class="max-w-lg mx-auto text-center text-gray-400 text-xs mt-2 pb-8">
+            <p>App creada por @ejruizgarcia con la IA de Gemini.</p>
+            <p>Licencia Creative Commons CC BY-NC-SA 4.0</p>
+        </div>
     </main>
 
     <!-- Botón Flotante Menú Juegos -->
@@ -244,6 +249,11 @@
                     Cerrar Ficha
                 </button>
             </div>
+            
+            <div class="max-w-lg mx-auto text-center text-gray-400 text-xs mt-6 pb-4">
+                <p>App creada por @ejruizgarcia con la IA de Gemini.</p>
+                <p>Licencia Creative Commons CC BY-NC-SA 4.0</p>
+            </div>
         </div>
     </div>
 
@@ -275,6 +285,11 @@
                     <span class="font-bold text-gray-800 text-lg">La Venera</span>
                 </a>
             </div>
+            
+            <div class="max-w-lg mx-auto text-center text-gray-400 text-xs mt-auto pt-6 pb-4">
+                <p>App creada por @ejruizgarcia con la IA de Gemini.</p>
+                <p>Licencia Creative Commons CC BY-NC-SA 4.0</p>
+            </div>
         </div>
     </div>
 
@@ -289,6 +304,11 @@
         
         <div id="juegosContenido" class="flex-1 overflow-y-auto p-5 flex flex-col items-center justify-center gap-6">
             <!-- Contenido dinámico -->
+        </div>
+        
+        <div class="shrink-0 text-center text-gray-500 text-xs p-4 bg-gray-900">
+            <p>App creada por @ejruizgarcia con la IA de Gemini.</p>
+            <p>Licencia Creative Commons CC BY-NC-SA 4.0</p>
         </div>
     </div>
 
@@ -388,21 +408,20 @@
                 
                 if (ahora >= fin) {
                     porcentaje = 100;
-                    barra.boton.classList.add('opacity-40', 'grayscale');
-                } else {
-                    barra.boton.classList.remove('opacity-40', 'grayscale');
-                    if (ahora > inicio) {
-                        porcentaje = ((ahora - inicio) / (fin - inicio)) * 100;
-                    }
+                } else if (ahora > inicio) {
+                    porcentaje = ((ahora - inicio) / (fin - inicio)) * 100;
                 }
 
                 barra.elemento.style.width = porcentaje + '%';
 
                 const enCalle = ahora >= barra.salidaTs && ahora < barra.recogidaPasoTs;
+                const estaRecogida = ahora >= barra.recogidaPasoTs;
 
-                barra.boton.classList.remove('ring-2', 'ring-rose-500', 'border-transparent', 'border-gray-200');
+                barra.boton.classList.remove('ring-2', 'ring-rose-500', 'border-transparent', 'border-gray-200', 'border-dashed', 'border-gray-400', 'opacity-40', 'opacity-50', 'grayscale');
 
-                if (enCalle) {
+                if (estaRecogida) {
+                    barra.boton.classList.add('border-dashed', 'border-gray-400', 'opacity-50', 'grayscale');
+                } else if (enCalle) {
                     barra.boton.classList.add('ring-2', 'ring-rose-500', 'border-transparent');
                 } else {
                     barra.boton.classList.add('border-gray-200');
@@ -1205,5 +1224,3 @@
     </script>
 </body>
 </html>
-
-
