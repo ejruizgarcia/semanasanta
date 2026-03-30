@@ -170,24 +170,55 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                        <p class="text-xs text-gray-500 uppercase font-bold mb-1">Salida</p>
-                        <p id="modalSalida" class="text-xl font-bold text-gray-800"></p>
+                        <p class="text-xs text-gray-500 uppercase font-bold mb-2">Salida</p>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600 font-medium">Cruz de Guía:</span>
+                            <span id="modalSalidaCruz" class="font-bold text-gray-800"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 font-medium">Último Paso:</span>
+                            <span id="modalSalidaPaso" class="font-bold text-gray-800"></span>
+                        </div>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                        <p class="text-xs text-gray-500 uppercase font-bold mb-1">Recogida</p>
-                        <p id="modalRecogida" class="text-xl font-bold text-gray-800"></p>
+                        <p class="text-xs text-gray-500 uppercase font-bold mb-2">Recogida</p>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600 font-medium">Cruz de Guía:</span>
+                            <span id="modalRecogidaCruz" class="font-bold text-gray-800"></span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 font-medium">Último Paso:</span>
+                            <span id="modalRecogidaPaso" class="font-bold text-gray-800"></span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm my-2">
                     <p class="text-sm text-amber-800 uppercase font-bold tracking-wider mb-3">Carrera Oficial</p>
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-amber-900 font-medium">Entrada Cruz de Guía:</span>
-                        <span id="modalEntradaCO" class="text-lg font-bold text-amber-700 bg-amber-200 px-2 py-1 rounded"></span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-amber-900 font-medium">Salida Último Paso:</span>
-                        <span id="modalSalidaCO" class="text-lg font-bold text-amber-700 bg-amber-200 px-2 py-1 rounded"></span>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-amber-700 uppercase font-bold mb-1 border-b border-amber-200 pb-1">Entrada</p>
+                            <div class="flex justify-between text-sm mb-1 mt-2">
+                                <span class="text-amber-900">Cruz:</span>
+                                <span id="modalEntradaCOCruz" class="font-bold text-amber-800"></span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-amber-900">Paso:</span>
+                                <span id="modalEntradaCOPaso" class="font-bold text-amber-800"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xs text-amber-700 uppercase font-bold mb-1 border-b border-amber-200 pb-1">Salida</p>
+                            <div class="flex justify-between text-sm mb-1 mt-2">
+                                <span class="text-amber-900">Cruz:</span>
+                                <span id="modalSalidaCOCruz" class="font-bold text-amber-800"></span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-amber-900">Paso:</span>
+                                <span id="modalSalidaCOPaso" class="font-bold text-amber-800"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -251,42 +282,42 @@
     <script>
         const datosSemanaSanta = {
             domingo: [
-                { nombre: 'La Borriquita', sede: 'Capilla de María Santísima de La Estrella', salida: '15:50', entradaCO: '17:50', salidaCO: '19:00', recogida: '23:00', itinerario: 'Real, Sánchez Cerquero, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Plaza de la Iglesia, Real, CARRERA OFICIAL, General Valdés, Sánchez Cerquero, Tomás del Valle, Peces Casas, Bravo, Lanuza, Héroes del Baleares, Real y a su Templo.' },
-                { nombre: 'Columna', sede: 'Iglesia Mayor Parroquial de San Pedro, San Pablo y los Desagravios', salida: '18:30', entradaCO: '18:35', salidaCO: '20:05', recogida: '01:00', itinerario: 'Real, CARRERA OFICIAL, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de septiembre de 1810, Rosario, Murillo, La Herrán, Real, Almirante Cervera, San Servando, San Nicolás, San Francisco de Asís, San Pedro Apóstol, Jorge Juan, San Vicente, Benito Pérez Galdós, Capataz Nicolás Carrillo, Real y a su Templo.' },
-                { nombre: 'Humildad y Paciencia', sede: 'Parroquia de San Servando y San Germán', salida: '17:00', entradaCO: '20:10', salidaCO: '21:25', recogida: '02:15', itinerario: 'Avda. Ponce de León, Avda. Al-Andalus, Rotonda Hornos Púnicos, Benjamín López, Cascos Azules de la Isla, Guardiamarinas, Colegio Naval Sacramento, Cecilio Pujazón, Calderón de la Barca, Cayetano del Toro, General Serrano, Real, CARRERA OFICIAL, General Valdés, Alameda Moreno de Guerra, Real, Manuel de Arriaga, San Joaquín, Plaza General Menéndez Pidal, Jovellanos, San Juan de la Cruz, Avda. Duque de Arcos, Avda. Ponce de León y a su Templo.' }
+                { nombre: 'La Borriquita', sede: 'Capilla de Nuestra Señora de la Estrella', salidaCruz: '15:50', salidaPaso: '16:15', entradaCOCruz: '17:50', entradaCOPaso: '18:20', salidaCOCruz: '18:20', salidaCOPaso: '19:00', recogidaCruz: '21:40', recogidaPaso: '23:00', itinerario: 'Real, Sánchez Cerquero, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Plaza de la Iglesia, Real, Carrera Oficial, General Valdés, Sánchez Cerquero, Tomás del Valle, Pece Casas, Bravo, Lanuza, Héroes del Baleares, Real y a su templo.' },
+                { nombre: 'Columna', sede: 'Iglesia Mayor Parroquial de San Pedro y San Pablo y los Desagravios', salidaCruz: '18:30', salidaPaso: '19:15', entradaCOCruz: '18:40', entradaCOPaso: '19:35', salidaCOCruz: '19:20', salidaCOPaso: '20:20', recogidaCruz: '23:45', recogidaPaso: '00:45', itinerario: 'Real, Carrera Oficial, General Valdés, Losada, Real, San José, Plaza de San José, Virgen de los Desamparados, Dolores, Pérez Galdós, San Cristóbal, San Francisco de Asís, San Nicolás, San Servando, Almirante Cervera, Jorge Juan, San Vicente, Pérez Galdós, Capataz Nicolás Carrillo, Real y a su templo.' },
+                { nombre: 'Humildad y Paciencia', sede: 'Iglesia de San Servando y San Germán', salidaCruz: '17:00', salidaPaso: '17:30', entradaCOCruz: '20:10', entradaCOPaso: '21:05', salidaCOCruz: '20:50', salidaCOPaso: '21:25', recogidaCruz: '01:15', recogidaPaso: '02:15', itinerario: 'Avenida Ponce de León, Avenida Al-Andalus, Benjamín López, Cascos Azules de la Isla, Guardiamarinas, Colegio Naval Sacramento, Cecilio Pujazón, Calderón de la Barca, Cayetano del Toro, General Serrano, Carrera Oficial, General Valdés, Alameda Moreno de Guerra, Real, Manuel de Arriaga, San Joaquín, Plaza del Carmen, Jovellanos, San Juan de la Cruz, Avenida Duque de Arcos, Avenida Ponce de León y a su templo.' }
             ],
             lunes: [
-                { nombre: 'Estudiantes', sede: 'Iglesia del Santo Cristo', salida: '18:10', entradaCO: '20:05', salidaCO: '20:55', recogida: '23:10', itinerario: 'Plaza Sta. Teresa de Calcula, Profesor Antonio Ramos, Maestro Portela, Manuel Roldán, Colón, Rosario, Juan de Mariana, Murillo, La Herrán, Real, CARRERA OFICIAL, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de septiembre de 1810, Rosario, Murillo, San Esteban, San Gaspar, Constructora Naval, Colón, Churruca, Maestro Portela, Profesor Antonio Ramos, Plaza Santa Teresa de Calcula y a su Templo.' },
-                { nombre: 'Medinaceli', sede: 'Iglesia Mayor', salida: '19:00', entradaCO: '19:05', salidaCO: '20:30', recogida: '00:40', itinerario: 'Plaza de la Iglesia, Real, CARRERA OFICIAL, General Valdés, Alameda Moreno de Guerra, Real, San José, Plaza de San José, Virgen de los Desamparados, Dolores, Pérez Galdós, San Nicolás, San Servando, Almirante Cervera, Real, La Herrán, Murillo, Rosario, Plaza de la Iglesia, Real y a su Templo.' },
-                { nombre: 'Ecce-Homo', sede: 'Iglesia de la Divina Pastora', salida: '19:00', entradaCO: '20:30', salidaCO: '21:45', recogida: '01:30', itinerario: 'Plaza de la Divina Pastora, Marconi, Santo Domingo, Cardenal Spínola, Diego de Alvear, Real, CARRERA OFICIAL, Isaac Peral, Calderón de la Barca, Cayetano del Toro, 24 de septiembre de 1810, Rosario, Colón, San Rafael, Maestro Portela, Manuel Roldán, Colón, Escultor Alfonso Berraquero García, Marconi, Plaza de la Pastora y a su Templo.' }
+                { nombre: 'Medinaceli', sede: 'Iglesia Mayor Parroquial de San Pedro y San Pablo y los Desagravios', salidaCruz: '19:00', salidaPaso: '19:45', entradaCOCruz: '19:05', entradaCOPaso: '20:00', salidaCOCruz: '19:30', salidaCOPaso: '20:30', recogidaCruz: '23:40', recogidaPaso: '00:40', itinerario: 'Real, Carrera Oficial, General Valdés, Alameda Moreno de Guerra, Real, San José, Plaza de San José, Virgen de los Desamparados, Dolores, Pérez Galdós, San Nicolás, San Servando, Almirante Cervera, Real, La Herrán, Murillo, Rosario, Plaza de la Iglesia y a su templo.' },
+                { nombre: 'Afligidos (Estudiantes)', sede: 'Iglesia del Santo Cristo', salidaCruz: '18:10', salidaPaso: '18:20', entradaCOCruz: '20:05', entradaCOPaso: '20:25', salidaCOCruz: '20:30', salidaCOPaso: '20:55', recogidaCruz: '22:45', recogidaPaso: '23:10', itinerario: 'Plaza Madre Teresa de Calcuta, Profesor Antonio Ramos, Maestro Portela, Manuel Roldán, Colón, Rosario, Juan de Mariana, Murillo, La Herrán, Real, Carrera Oficial, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Rosario, Murillo, San Esteban, San Gaspar, Constructora Naval, Colón, Churruca, Maestro Portela, Profesor Antonio Ramos, Plaza Madre Teresa de Calcuta y a su templo.' },
+                { nombre: 'Ecce-Homo', sede: 'Iglesia de la Divina Pastora', salidaCruz: '19:00', salidaPaso: '19:45', entradaCOCruz: '20:30', entradaCOPaso: '21:15', salidaCOCruz: '21:00', salidaCOPaso: '21:45', recogidaCruz: '00:30', recogidaPaso: '01:30', itinerario: 'Plaza de la Pastora, Santa Rosalía, Marconi, Santo Domingo, Cardenal Spínola, Diego de Alvear, Real, Carrera Oficial, Isaac Peral, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Rosario, Colón, San Rafael, Maestro Portela, Manuel Roldán, Colón, Escaño, Escultor Alfonso Berraquero García, Marconi, Santa Rosalía, Plaza de la Pastora y a su templo.' }
             ],
             martes: [
-                { nombre: 'Huerto', sede: 'Iglesia de la Divina Pastora', salida: '18:15', entradaCO: '19:30', salidaCO: '21:15', recogida: '01:15', itinerario: 'Plaza Divina Pastora, Santa Rosalía, Marconi, Santo Domingo, Cardenal Spínola, Murillo, Rosario, Plaza de la Iglesia, Real, CARRERA OFICIAL, Isaac Peral, Cayetano del Toro, 24 de septiembre de 1810, Antonio López, González Hontoria, Rosario, Colón, San Rafael, Ancha, Mariana de Pineda, Santo Domingo, Daniel González, Santa Rosalía, Plaza Divina Pastora y a su Templo.' },
-                { nombre: 'Caridad', sede: 'Iglesia Vaticana y Castrense de San Francisco de Asís', salida: '19:00', entradaCO: '21:00', salidaCO: '22:00', recogida: '01:30', itinerario: 'Real, Interior Alameda Moreno de Guerra, General Valdés, Sánchez Cerquero, Real, Dolores, Pérez Galdós, Callejón Capataz Nicolás Carrillo, Real, CARRERA OFICIAL, General Valdés, Sánchez Cerquero, Real, Tomás del Valle, Peces Casas, Bravo, Lanuza, Héroes de Baleares, Menorca, Doctor Cellier, Plaza Rodríguez de Arias, Lezo, San Bruno, Tirso de Molina, Velarde, Lope de Vega, Real y a su Templo.' },
-                { nombre: 'Prendimiento', sede: 'Parroquia de San José Artesano', salida: '17:45', entradaCO: '21:30', salidaCO: '22:45', recogida: '01:45', itinerario: 'General García de la Herrán, Antonio López, Constructora Naval, Colón, Cardenal Spínola, Diego de Alvear, Real, CARRERA OFICIAL, Isaac Peral, Arenal, Interior Parque Almirante Laulhé, Paseo Virgen del Buen Fin, Avenida Doctor Revuelta Soba y a su Templo.' }
+                { nombre: 'Huerto', sede: 'Iglesia de la Divina Pastora', salidaCruz: '18:15', salidaPaso: '19:05', entradaCOCruz: '19:30', entradaCOPaso: '20:45', salidaCOCruz: '20:05', salidaCOPaso: '21:15', recogidaCruz: '23:15', recogidaPaso: '01:15', itinerario: 'Plaza de la Pastora, Santa Rosalía, Marconi, Santo Domingo, Cardenal Spínola, Murillo, Rosario, Plaza de la Iglesia, Real, Carrera Oficial, Isaac Peral, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Antonio López, González Hontoria, Rosario, Colón, San Rafael, Maestro Portela, Mariana de Pineda, Santo Domingo, Daniel González, Santa Rosalía, Plaza de la Pastora y a su templo.' },
+                { nombre: 'Caridad', sede: 'Iglesia Vaticana y Castrense de San Francisco de Asís', salidaCruz: '19:00', salidaPaso: '19:30', entradaCOCruz: '21:00', entradaCOPaso: '21:25', salidaCOCruz: '21:30', salidaCOPaso: '22:00', recogidaCruz: '01:00', recogidaPaso: '01:30', itinerario: 'Real, Alameda Moreno de Guerra, General Valdés, Sánchez Cerquero, Real, Dolores, Pérez Galdós, Capataz Nicolás Carrillo, Real, Carrera Oficial, General Valdés, Sánchez Cerquero, Tomás del Valle, Pece Casas, Bravo, Lanuza, Héroes del Baleares, Menorca, Plaza Rodríguez Arias, Lezo, San Bruno, Tirso de Molina, Velarde, Lope de Vega, Real y a su templo.' },
+                { nombre: 'Prendimiento', sede: 'Iglesia de San José Artesano', salidaCruz: '17:45', salidaPaso: '18:30', entradaCOCruz: '21:30', entradaCOPaso: '22:05', salidaCOCruz: '22:00', salidaCOPaso: '22:45', recogidaCruz: '00:15', recogidaPaso: '01:45', itinerario: 'General García de la Herrán, Antonio López, Constructora Naval, Colón, Cardenal Spínola, Diego de Alvear, Real, Carrera Oficial, Isaac Peral, Arenal, Paseo Virgen del Buen Fin, Avenida Doctor José Revuelta Soba y a su templo.' }
             ],
             miercoles: [
-                { nombre: 'Servitas', sede: 'Iglesia Mayor Parroquial', salida: '19:00', entradaCO: '19:07', salidaCO: '19:40', recogida: '23:25', itinerario: 'Real, CARRERA OFICIAL, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de septiembre de 1810, Antonio López, Constructora Naval, Colón, Churruca, Maestro Portela, Manuel Roldán, Colón, González de la Vega, Juan de Mariana, San Esteban, Murillo, La Herrán, Real, Almirante Cervera, Pérez Galdós, Capataz Nicolás Carrillo, Plaza de la Iglesia y a su Templo.' },
-                { nombre: 'Gran Poder', sede: 'Iglesia de la Sagrada Familia', salida: '16:45', entradaCO: '19:30', salidaCO: '20:35', recogida: '02:45', itinerario: 'Plaza de la Sagrada Familia, Carretera de la Carraca, Puente de Nuestro Padre Jesús del Gran Poder, Avenida del Cid, Hernán Cortés, Albina del Puente, Plaza del Castillo, Escaño, Arias de Miranda, Real, CARRERA OFICIAL, Isaac Peral, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Colón, San Rafael, Maestro Portela, Mariana de Pineda, Augusto de Miranda, Hernán Cortés, Avenida del Cid, Puente de Ntro. P. Jesús del Gran Poder, Carretera de la Carraca, Cantabria, Eume, Plaza de la Sagrada Familia y a su Templo.' },
-                { nombre: 'Vera Cruz', sede: 'Capilla del Santísimo Cristo de la Vera Cruz', salida: '19:00', entradaCO: '21:30', salidaCO: '22:15', recogida: '00:20', itinerario: 'Bazán, Méndez Núñez, Calatrava, Ancha, Manuel Roldán, Colón, Rosario, Murillo, La Herrán, Real, Estación de Penitencia en la Iglesia Mayor, CARRERA OFICIAL, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de septiembre de 1810, Antonio López, Plaza Jesús de Medinaceli, Constructora Naval, Colón, Churruca, Lanza, Nápoles, Servando Gutiérrez, Bazán, Patrona y a su Capilla.' }
+                { nombre: 'Servitas', sede: 'Iglesia Mayor Parroquial de San Pedro y San Pablo y los Desagravios', salidaCruz: '19:00', salidaPaso: '19:15', entradaCOCruz: '19:07', entradaCOPaso: '19:17', salidaCOCruz: '19:25', salidaCOPaso: '19:40', recogidaCruz: '22:50', recogidaPaso: '23:00', itinerario: 'Real, Carrera Oficial, General Valdés, Sánchez Cerquero, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Antonio López, Constructora Naval, Colón, Churruca, Maestro Portela, Manuel Roldán, Colón, González de la Vega, Juan de Mariana, San Esteban, Murillo, La Herrán, Real y a su templo.' },
+                { nombre: 'Gran Poder', sede: 'Iglesia de la Sagrada Familia', salidaCruz: '16:45', salidaPaso: '17:15', entradaCOCruz: '19:30', entradaCOPaso: '20:00', salidaCOCruz: '20:00', salidaCOPaso: '20:30', recogidaCruz: '01:30', recogidaPaso: '02:30', itinerario: 'Plaza de la Sagrada Familia, Padre Neyra, Carretera de la Carraca, Puente Ntro. P. Jesús del Gran Poder, Avenida del Cid, Hernán Cortés, Albina del Puente, Plaza del Castillo, Escaño, Arias de Miranda, Real, Carrera Oficial, Isaac Peral, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Colón, San Rafael, Maestro Portela, Mariana de Pineda, Plaza Sánchez de la Campa, Hernán Cortés, Avenida del Cid, Puente Ntro. P. Jesús del Gran Poder, Carretera de la Carraca, Cantabria, Eume, Plaza de la Sagrada Familia y a su templo.' },
+                { nombre: 'Vera Cruz', sede: 'Capilla del Santísimo Cristo de la Vera Cruz', salidaCruz: '18:45', salidaPaso: '19:05', entradaCOCruz: '21:15', entradaCOPaso: '21:35', salidaCOCruz: '21:40', salidaCOPaso: '21:55', recogidaCruz: '23:30', recogidaPaso: '00:00', itinerario: 'Plaza del Santísimo Cristo de la Vera Cruz, Bazán, Méndez Núñez, Calatrava, Maestro Portela, Manuel Roldán, Colón, Rosario, Murillo, La Herrán, Real, Iglesia Mayor Parroquial de San Pedro, San Pablo y los Desagravios, Real, Carrera Oficial, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Antonio López, Constructora Naval, Colón, Churruca, Lanza, Nápoles, Plaza del Santísimo Cristo de la Vera Cruz y a su templo.' }
             ],
             jueves: [
-                { nombre: 'Tres Caídas', sede: 'Iglesia de la Sagrada Familia', salida: '15:00', entradaCO: '18:30', salidaCO: '19:30', recogida: '00:00', itinerario: 'Plaza de la Sagrada Familia, Carretera de la Carraca, Puente Nuestro Padre Jesús del Gran Poder, Avenida del Cid, Hernán Cortés, Albina del Puente, Mariana de Pineda, Alfonso Berraquero García, Escaño, Cardenal Spínola, Diego de Alvear, Real, CARRERA OFICIAL, Plaza del Rey, Isaac Peral, Dolores, Pérez Galdós, Almirante Cervera, Real, Arias de Miranda, Escaño, Plaza del Castillo, Montañeses de la Isla, Plaza de Juan Vargas, Avenida del Cid, Puente Nuestro Padre Jesús del Gran Poder, Carretera de la Carraca, Plaza de la Sagrada Familia y a su Templo.' },
-                { nombre: 'Perdón', sede: 'Iglesia de la Inmaculada Concepción', salida: '15:45', entradaCO: '19:15', salidaCO: '19:55', recogida: '00:30', itinerario: 'Plaza San Juan, Magallanes, San Federico, Rotonda de la Cruz, Puente de la Casería, San José y San Antonio, Patrona, San Ignacio, Avenida Reyes Católicos, Profesor Antonio Ramos, Maestro Pórtela, San Rafael, Colon, Rosario, Plaza de la Iglesia, CARRERA OFICIAL, Isaac Peral, Cayetano del Toro, General García la Herrán, Rosario, González Hontoria, Constructora Naval, Colón, Churruca, Juan de Austria, Calatrava, Plaza José Suarez, Pintor José Martínez Pepiño, Paseo Gral. Lobo, Paseo Joly Velasco, Juan Sebastián Elcano, San Roque, Magallanes, Plaza San Juan y a su Templo.' },
-                { nombre: 'Misericordia', sede: 'Iglesia de la Divina Pastora', salida: '18:15', entradaCO: '19:45', salidaCO: '21:15', recogida: '00:30', itinerario: 'Plaza de la Divina Pastora, Santa Rosalía, Marconi, Santo Domingo, Colón, Rosario, Plaza de la Iglesia, Real, CARRERA OFICIAL, Isaac Peral, Calderón De La Barca, Cayetano del Toro, General Serrano, Las Cortes, General García de la Herrán, Rosario, Colón, San Rafael, Maestro Portela, Manuel Roldán, Colón, Santo Domingo, Marconi, Santa Rosalía, Plaza de la Divina Pastora y a su Templo.' },
-                { nombre: 'Silencio', sede: 'Iglesia Vaticana y Castrense de San Francisco de Asís', salida: '21:30', entradaCO: '01:10', salidaCO: '02:25', recogida: '03:10', itinerario: 'Real, San José, Plaza de San José, Virgen de los Desamparados, Dolores, Pérez Galdós, Almirante Cervera, Real, La Herrán, Murillo, San Esteban, San Gaspar, Constructora Naval, Plaza Jesús de Medinaceli, González Hontoria, Rosario, Plaza de la Iglesia, Real, CARRERA OFICIAL, General Valdés, Alameda Moreno de Guerra, Real y a su Templo.' }
+                { nombre: 'Tres Caídas', sede: 'Iglesia de la Sagrada Familia', salidaCruz: '14:30', salidaPaso: '14:45', entradaCOCruz: '18:00', entradaCOPaso: '18:15', salidaCOCruz: '18:45', salidaCOPaso: '19:00', recogidaCruz: '23:45', recogidaPaso: '00:00', itinerario: 'Plaza de la Sagrada Familia, Padre Neyra, Carretera de la Carraca, Puente Ntro. P. Jesús del Gran Poder, Avenida del Cid, Hernán Cortés, Albina del Puente, Mariana de Pineda, Santa Rosalía, Marconi, Santo Domingo, Cardenal Spínola, Diego de Alvear, Real, Carrera Oficial, Plaza del Rey, Dolores, Pérez Galdós, Almirante Cervera, Real, Arias de Miranda, Escaño, Plaza del Castillo, Avenida Montañeses de la Isla, Plaza de Juan Vargas, Avenida del Cid, Puente Ntro. P. Jesús del Gran Poder, Carretera de la Carraca, Padre Neyra, Plaza de la Sagrada Familia y a su templo.' },
+                { nombre: 'Perdón', sede: 'Parroquia de la Inmaculada Concepción', salidaCruz: '15:00', salidaPaso: '15:30', entradaCOCruz: '18:50', entradaCOPaso: '19:20', salidaCOCruz: '19:40', salidaCOPaso: '20:20', recogidaCruz: '00:20', recogidaPaso: '01:15', itinerario: 'Magallanes, Torero Rafael Ortega, Puente de la Casería, San José y San Antonio, Patrona, San Ignacio, Calatrava, Colón, Constructora Naval, González Hontoria, Rosario, Plaza de la Iglesia, Real, Carrera Oficial, Isaac Peral, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Colón, San Rafael, Juan de Austria, San José y San Antonio, Puente de la Casería, Torero Rafael Ortega, Magallanes, Batalla del Ebro, Juan Sebastián Elcano, San Roque, Magallanes y a su templo.' },
+                { nombre: 'Misericordia', sede: 'Iglesia de la Divina Pastora', salidaCruz: '18:15', salidaPaso: '19:00', entradaCOCruz: '19:55', entradaCOPaso: '20:35', salidaCOCruz: '20:35', salidaCOPaso: '21:20', recogidaCruz: '23:30', recogidaPaso: '00:30', itinerario: 'Plaza de la Pastora, Santa Rosalía, Daniel González, Santo Domingo, Mariana de Pineda, Manuel Roldán, Colón, Rosario, Plaza de la Iglesia, Real, Carrera Oficial, Isaac Peral, Calderón de la Barca, Cayetano del Toro, General Serrano, Las Cortes, General García de la Herrán, Rosario, Colón, San Rafael, Maestro Portela, Mariana de Pineda, Escultor Alfonso Berraquero García, Marconi, Santa Rosalía, Plaza de la Pastora y a su templo.' },
+                { nombre: 'Expiración (Silencio)', sede: 'Iglesia Vaticana y Castrense de San Francisco de Asís', salidaCruz: '21:30', salidaPaso: '22:00', entradaCOCruz: '01:10', entradaCOPaso: '01:40', salidaCOCruz: '01:50', salidaCOPaso: '02:25', recogidaCruz: '02:40', recogidaPaso: '03:10', itinerario: 'Real, San José, Plaza de San José, Virgen de los Desamparados, Dolores, Pérez Galdós, Almirante Cervera, Real, La Herrán, Murillo, San Esteban, San Gaspar, Constructora Naval, González Hontoria, Rosario, Plaza de la Iglesia, Real, Carrera Oficial, General Valdés, Alameda Moreno de Guerra, Real y a su templo.' }
             ],
             madrugada: [
-                { nombre: 'Nazareno', sede: 'Iglesia Mayor Parroquial', salida: '02:00', entradaCO: '02:05', salidaCO: '03:45', recogida: '10:30', itinerario: 'Plaza de la Iglesia, Real, CARRERA OFICIAL, Isaac Peral, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Colón, Churruca, Maestro Portela, Manuel Roldán, Colón, Cardenal Spínola, Diego de Alvear, Real, Plaza de la Iglesia y a su Templo.' }
+                { nombre: 'Nazareno', sede: 'Iglesia Mayor Parroquial de San Pedro y San Pablo y los Desagravios', salidaCruz: '02:00', salidaPaso: '03:00', entradaCOCruz: '02:05', entradaCOPaso: '03:05', salidaCOCruz: '03:00', salidaCOPaso: '03:45', recogidaCruz: '09:00', recogidaPaso: '10:30', itinerario: 'Real, Carrera Oficial, Isaac Peral, Calderón de la Barca, Cayetano del Toro, General García de la Herrán, Rosario, Colón, Churruca, Maestro Portela, Manuel Roldán, Colón, Cardenal Spínola, Diego de Alvear, Real y a su templo.' }
             ],
             viernes: [
-                { nombre: 'Soledad', sede: 'Iglesia Mayor Parroquial', salida: '19:30', entradaCO: '19:45', salidaCO: '20:50', recogida: '00:30', itinerario: 'Real, CARRERA OFICIAL, Isaac Peral, Calderón de la Barca, Cayetano del Toro, 24 de septiembre de 1810, Antonio López, Constructora Naval, San Gaspar, San Esteban, Murillo, La Herrán, Real, Almirante Cervera, San Servando, San Nicolás, Pérez Galdós, Capataz Nicolás Carrillo, Real y a su Templo.' },
-                { nombre: 'Desamparados', sede: 'Capilla de María Santísima de los Desamparados', salida: '18:30', entradaCO: '21:30', salidaCO: '22:25', recogida: '23:15', itinerario: 'Plaza San José, San José, Real, Losada, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Antonio López, González Hontoria, Rosario, General García de la Herrán, Las Cortes, General Serrano, CARRERA OFICIAL, General Valdés, Sánchez Cerquero, Real, San José, Plaza de San José y su Templo.' },
-                { nombre: 'Santo Entierro', sede: 'Iglesia Conventual de Nuestra Señora del Carmen', salida: '18:45', entradaCO: '20:45', salidaCO: '21:50', recogida: '23:40', itinerario: 'Real, Dolores, Pérez Galdós, Capataz Nicolás Carrillo, Plaza de la Iglesia, Real, CARRERA OFICIAL, General Valdés, Alameda Moreno de Guerra, Real, Galiano, San Joaquín, Plaza del Carmen, Real y a su Templo.' },
-                { nombre: 'Rosario', sede: 'Iglesia Mayor Parroquial', salida: '23:00', entradaCO: '23:05', salidaCO: '23:45', recogida: '02:35', itinerario: 'Plaza de la Iglesia, CARRERA OFICIAL, General Valdés, Sánchez Cerquero, Daoiz, Isaac Peral, Arenal, Anden del Parque Almirante Laulhé, General García de La Herrán, Puerto de Palos, Pintor Ángel Cousilla, Moguer, Escritor Manuel Barrios, Paseo Virgen del Buen Fin, Parque Almirante Laulhé, Hermanos Laulhé, Antonio López, 24 de Septiembre de 1810, Rosario, Plaza de la Iglesia, y a su Templo.' }
+                { nombre: 'Soledad', sede: 'Iglesia Mayor Parroquial de San Pedro y San Pablo y los Desagravios', salidaCruz: '19:30', salidaPaso: '20:05', entradaCOCruz: '19:45', entradaCOPaso: '20:20', salidaCOCruz: '20:15', salidaCOPaso: '20:50', recogidaCruz: '00:00', recogidaPaso: '00:30', itinerario: 'Real, Carrera Oficial, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Antonio López, Constructora Naval, San Gaspar, San Esteban, Murillo, La Herrán, Real, Almirante Cervera, Jorge Juan, San Pedro Apóstol, San Servando, San Nicolás, Pérez Galdós, Capataz Nicolás Carrillo, Real y a su templo.' },
+                { nombre: 'Santo Entierro', sede: 'Iglesia Conventual de Nuestra Señora del Carmen', salidaCruz: '18:45', salidaPaso: '19:10', entradaCOCruz: '20:45', entradaCOPaso: '21:26', salidaCOCruz: '21:20', salidaCOPaso: '21:50', recogidaCruz: '23:10', recogidaPaso: '23:40', itinerario: 'Real, Dolores, Pérez Galdós, Capataz Nicolás Carrillo, Real, Carrera Oficial, General Valdés, Alameda Moreno de Guerra, Real, Galiano, San Joaquín, Plaza del Carmen y a su templo.' },
+                { nombre: 'Desamparados', sede: 'Capilla de Nuestra Señora de los Desamparados', salidaCruz: '18:30', salidaPaso: '19:05', entradaCOCruz: '21:30', entradaCOPaso: '21:55', salidaCOCruz: '22:00', salidaCOPaso: '22:25', recogidaCruz: '22:55', recogidaPaso: '23:15', itinerario: 'Plaza de San José, San José, Real, Losada, General Valdés, Saturnino Montojo, Calderón de la Barca, Cayetano del Toro, 24 de Septiembre de 1810, Antonio López, González Hontoria, Rosario, General García de la Herrán, Las Cortes, General Serrano, Carrera Oficial, General Valdés, Sánchez Cerquero, Real, San José, Plaza de San José y a su templo.' },
+                { nombre: 'Rosario', sede: 'Iglesia Mayor Parroquial de San Pedro y San Pablo y los Desagravios', salidaCruz: '23:00', salidaPaso: '23:10', entradaCOCruz: '23:05', entradaCOPaso: '23:15', salidaCOCruz: '23:35', salidaCOPaso: '23:45', recogidaCruz: '02:20', recogidaPaso: '02:35', itinerario: 'Real, Carrera Oficial, General Valdés, Sánchez Cerquero, Daoiz, Isaac Peral, Arenal, Parque Almirante Laulhé, General García de la Herrán, Puerto de Palos, Pintor Ángel Cousilla, Moguer, Escritor Manuel Barrios, Paseo Virgen del Buen Fin, Hermanos Laulhé, Antonio López, 24 de Septiembre de 1810, Rosario, Plaza de la Iglesia y a su templo.' }
             ],
             resurreccion: [
-                { nombre: 'Resurrección', sede: 'Iglesia de San José Artesano', salida: '10:00', entradaCO: '11:45', salidaCO: '13:20', recogida: '14:45', itinerario: 'General García de la Herrán, Antonio López, González Hontoria, Rosario, Plaza de la Iglesia, Estación de Penitencia en la Iglesia Mayor, Real, Carrera Oficial, Isaac Peral, Arenal, Interior Parque Almirante Laulhé, Paseo Virgen del Buen Fin, Interior Parque Almirante Laulhé, General García de la Herrán y a su Templo.' }
+                { nombre: 'Resurrección', sede: 'Iglesia de San José Artesano', salidaCruz: '10:15', salidaPaso: '10:30', entradaCOCruz: '11:45', entradaCOPaso: '12:00', salidaCOCruz: '12:30', salidaCOPaso: '12:45', recogidaCruz: '14:30', recogidaPaso: '15:00', itinerario: 'General García de la Herrán, Antonio López, González Hontoria, Rosario, Plaza de la Iglesia, Real, Carrera Oficial, Isaac Peral, Parque Almirante Laulhé, Paseo Virgen del Buen Fin, Parque Almirante Laulhé, General García de la Herrán y a su templo.' }
             ]
         };
 
@@ -354,7 +385,7 @@
 
                 barra.elemento.style.width = porcentaje + '%';
 
-                const enCalle = ahora >= barra.salidaTs && ahora < barra.recogidaTs;
+                const enCalle = ahora >= barra.salidaTs && ahora < barra.recogidaPasoTs;
 
                 barra.boton.classList.remove('ring-2', 'ring-rose-500', 'border-transparent', 'border-gray-200');
 
@@ -368,24 +399,29 @@
 
                 if (!notificados.has(barra.nombre + 'salida') && ahora >= barra.salidaTs && ahora <= barra.salidaTs + windowMs) {
                     notificados.add(barra.nombre + 'salida');
-                    mostrarNotificacion(`¡${barra.nombre} acaba de salir a la calle!`, '🚪');
+                    mostrarNotificacion(`¡La Cruz de Guía de ${barra.nombre} ya está en la calle!`, '🚪');
                 }
                 
                 if (!notificados.has(barra.nombre + 'co') && ahora >= barra.inicioTs && ahora <= barra.inicioTs + windowMs) {
                     notificados.add(barra.nombre + 'co');
-                    mostrarNotificacion(`¡${barra.nombre} entra en Carrera Oficial!`, '✨');
+                    mostrarNotificacion(`¡La Cruz de Guía de ${barra.nombre} entra en Carrera Oficial!`, '✨');
                     barra.boton.classList.add('shimmer-flash');
                     setTimeout(() => barra.boton.classList.remove('shimmer-flash'), 3500);
                 }
                 
                 if (!notificados.has(barra.nombre + 'salidaCO') && ahora >= barra.finTs && ahora <= barra.finTs + windowMs) {
                     notificados.add(barra.nombre + 'salidaCO');
-                    mostrarNotificacion(`¡${barra.nombre} sale de Carrera Oficial!`, '👋');
+                    mostrarNotificacion(`¡La Cruz de Guía de ${barra.nombre} sale de Carrera Oficial!`, '👋');
                 }
 
-                if (!notificados.has(barra.nombre + 'recogida') && ahora >= barra.recogidaTs && ahora <= barra.recogidaTs + windowMs) {
+                if (!notificados.has(barra.nombre + 'recogida') && ahora >= barra.recogidaCruzTs && ahora <= barra.recogidaCruzTs + windowMs) {
                     notificados.add(barra.nombre + 'recogida');
-                    mostrarNotificacion(`¡${barra.nombre} se ha recogido en su templo!`, '⛪');
+                    mostrarNotificacion(`¡La Cruz de Guía de ${barra.nombre} ha llegado a su templo!`, '⛪');
+                }
+
+                if (!notificados.has(barra.nombre + 'recogidaPaso') && ahora >= barra.recogidaPasoTs && ahora <= barra.recogidaPasoTs + windowMs) {
+                    notificados.add(barra.nombre + 'recogidaPaso');
+                    mostrarNotificacion(`¡El último paso de ${barra.nombre} ha entrado en su templo!`, '⛪');
                 }
             });
         }
@@ -429,7 +465,7 @@
                         if (horas < 7) horas += 24;
                         return horas * 60 + mins;
                     };
-                    return getMinutosSort(a.cofradia.entradaCO) - getMinutosSort(b.cofradia.entradaCO);
+                    return getMinutosSort(a.cofradia.entradaCOCruz) - getMinutosSort(b.cofradia.entradaCOCruz);
                 });
 
             const barrasParaActualizar = [];
@@ -458,7 +494,7 @@
                 
                 const horarioEl = document.createElement('span');
                 horarioEl.className = 'text-sm text-gray-500 font-medium';
-                horarioEl.innerText = `Carrera Oficial: ${cofradia.entradaCO}`;
+                horarioEl.innerText = `Carrera Oficial: ${cofradia.entradaCOCruz} (Cruz de Guía)`;
                 
                 textoDiv.appendChild(nombreEl);
                 textoDiv.appendChild(horarioEl);
@@ -478,10 +514,11 @@
                     nombre: cofradia.nombre,
                     boton: btn,
                     elemento: barraFondo,
-                    inicioTs: obtenerTimestampAbsoluto(diaActual, cofradia.entradaCO),
-                    finTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCO),
-                    salidaTs: obtenerTimestampAbsoluto(diaActual, cofradia.salida),
-                    recogidaTs: obtenerTimestampAbsoluto(diaActual, cofradia.recogida)
+                    inicioTs: obtenerTimestampAbsoluto(diaActual, cofradia.entradaCOCruz),
+                    finTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCOCruz),
+                    salidaTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCruz),
+                    recogidaCruzTs: obtenerTimestampAbsoluto(diaActual, cofradia.recogidaCruz),
+                    recogidaPasoTs: obtenerTimestampAbsoluto(diaActual, cofradia.recogidaPaso)
                 });
             });
             
@@ -515,14 +552,20 @@
             
             document.getElementById('modalTitulo').innerText = cofradia.nombre;
             document.getElementById('modalSede').innerText = cofradia.sede;
-            document.getElementById('modalSalida').innerText = cofradia.salida;
-            document.getElementById('modalRecogida').innerText = cofradia.recogida;
-            document.getElementById('modalEntradaCO').innerText = cofradia.entradaCO;
-            document.getElementById('modalSalidaCO').innerText = cofradia.salidaCO;
             document.getElementById('modalItinerario').innerText = cofradia.itinerario;
             
-            const inicioTs = obtenerTimestampAbsoluto(dia, cofradia.salida);
-            const finTs = obtenerTimestampAbsoluto(dia, cofradia.recogida);
+            document.getElementById('modalSalidaCruz').innerText = cofradia.salidaCruz;
+            document.getElementById('modalSalidaPaso').innerText = cofradia.salidaPaso;
+            document.getElementById('modalRecogidaCruz').innerText = cofradia.recogidaCruz;
+            document.getElementById('modalRecogidaPaso').innerText = cofradia.recogidaPaso;
+            
+            document.getElementById('modalEntradaCOCruz').innerText = cofradia.entradaCOCruz;
+            document.getElementById('modalEntradaCOPaso').innerText = cofradia.entradaCOPaso;
+            document.getElementById('modalSalidaCOCruz').innerText = cofradia.salidaCOCruz;
+            document.getElementById('modalSalidaCOPaso').innerText = cofradia.salidaCOPaso;
+            
+            const inicioTs = obtenerTimestampAbsoluto(dia, cofradia.salidaCruz);
+            const finTs = obtenerTimestampAbsoluto(dia, cofradia.recogidaPaso);
             
             actualizarModalProgreso(inicioTs, finTs);
             if (modalProgresoInterval) clearInterval(modalProgresoInterval);
@@ -902,6 +945,7 @@
 
         let trivialJugadores = [];
         let trivialRondaActual = 1;
+        let totalRondasTrivial = 5;
         let trivialTurnoActual = 0;
         let trivialOrdenDeJuego = [];
         let preguntasDisponibles = [];
@@ -911,22 +955,47 @@
         function iniciarTrivial(nombres) {
             trivialJugadores = nombres.map(n => ({ nombre: n, puntos: 0 }));
             trivialRondaActual = 1;
+            totalRondasTrivial = (trivialJugadores.length === 1) ? 10 : 5;
             
-            // Barajamos el banco de preguntas para esta partida
             preguntasDisponibles = [...bancoPreguntasTrivial].sort(() => Math.random() - 0.5);
 
-            // Determinamos el jugador inicial al azar
             const numJugadores = trivialJugadores.length;
             const inicioAzar = Math.floor(Math.random() * numJugadores);
             
-            // Creamos el orden de juego (ej: si empieza el 2, el orden es 2, 3, 0, 1)
             trivialOrdenDeJuego = [];
             for(let i = 0; i < numJugadores; i++) {
                 trivialOrdenDeJuego.push((inicioAzar + i) % numJugadores);
             }
             
             trivialTurnoActual = 0;
-            mostrarPantallaTrivial();
+            flujoTrivialTurno();
+        }
+
+        function flujoTrivialTurno() {
+            if (trivialJugadores.length === 1) {
+                mostrarPantallaTrivial();
+            } else {
+                mostrarTurnoPasoTrivial();
+            }
+        }
+
+        function mostrarTurnoPasoTrivial() {
+            const contenedor = document.getElementById('juegosContenido');
+            const indexJugador = trivialOrdenDeJuego[trivialTurnoActual];
+            const nombreActual = trivialJugadores[indexJugador].nombre;
+
+            contenedor.innerHTML = `
+                <div class="w-full max-w-sm flex flex-col items-center gap-8 fade-in text-center">
+                    <svg class="w-20 h-20 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <div>
+                        <p class="text-xl text-gray-400 mb-2">Pasa el dispositivo a</p>
+                        <h3 class="text-4xl font-bold text-white text-blue-400">${nombreActual}</h3>
+                    </div>
+                    <button onclick="mostrarPantallaTrivial()" class="w-full bg-gray-700 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-gray-600 transition active:scale-95 text-lg">
+                        Soy ${nombreActual}, jugar
+                    </button>
+                </div>
+            `;
         }
 
         function mostrarPantallaTrivial() {
@@ -934,10 +1003,8 @@
             const indexJugador = trivialOrdenDeJuego[trivialTurnoActual];
             const jugadorActual = trivialJugadores[indexJugador];
 
-            // Sacar una pregunta del pool
             preguntaSeleccionada = preguntasDisponibles.pop();
             
-            // Mezclar opciones
             opcionesActuales = [preguntaSeleccionada.a, ...preguntaSeleccionada.e];
             opcionesActuales.sort(() => Math.random() - 0.5);
 
@@ -953,7 +1020,7 @@
             contenedor.innerHTML = `
                 <div class="w-full max-w-lg flex flex-col gap-4 fade-in">
                     <div class="flex justify-between items-center bg-gray-800 p-3 rounded-xl border border-gray-700">
-                        <span class="text-blue-400 font-bold uppercase text-sm tracking-widest">Ronda ${trivialRondaActual} de 5</span>
+                        <span class="text-blue-400 font-bold uppercase text-sm tracking-widest">Ronda ${trivialRondaActual} de ${totalRondasTrivial}</span>
                         <span class="text-white font-bold">${jugadorActual.nombre}</span>
                     </div>
                     
@@ -979,18 +1046,17 @@
             const textoSeleccionado = opcionesActuales[indexSeleccionado];
             const esCorrecta = (textoSeleccionado === preguntaSeleccionada.a);
 
-            // Bloquear botones
             for(let i = 0; i < 4; i++) {
                 const btn = document.getElementById(`btnOpcion${i}`);
-                btn.onclick = null; // deshabilitar
+                btn.onclick = null;
                 btn.classList.remove('hover:bg-blue-600', 'bg-gray-700');
                 
                 if (opcionesActuales[i] === preguntaSeleccionada.a) {
-                    btn.classList.add('bg-green-600', 'border-green-400'); // La correcta siempre en verde
+                    btn.classList.add('bg-green-600', 'border-green-400');
                 } else if (i === indexSeleccionado && !esCorrecta) {
-                    btn.classList.add('bg-red-600', 'border-red-400'); // La seleccionada incorrecta en rojo
+                    btn.classList.add('bg-red-600', 'border-red-400');
                 } else {
-                    btn.classList.add('bg-gray-800', 'opacity-50'); // El resto atenuadas
+                    btn.classList.add('bg-gray-800', 'opacity-50');
                 }
             }
 
@@ -1006,17 +1072,26 @@
             trivialTurnoActual++;
             
             if (trivialTurnoActual >= trivialJugadores.length) {
-                mostrarClasificacionTrivial();
+                const esSolitario = trivialJugadores.length === 1;
+                
+                if (esSolitario) {
+                    if (trivialRondaActual === 5 || trivialRondaActual === 10) {
+                        mostrarClasificacionTrivial();
+                    } else {
+                        avanzarRondaTrivial();
+                    }
+                } else {
+                    mostrarClasificacionTrivial();
+                }
             } else {
-                mostrarPantallaTrivial();
+                flujoTrivialTurno();
             }
         }
 
         function mostrarClasificacionTrivial() {
             const contenedor = document.getElementById('juegosContenido');
-            const esFinal = (trivialRondaActual === 5);
+            const esFinal = (trivialRondaActual === totalRondasTrivial);
             
-            // Clonamos y ordenamos por puntuación
             const ranking = [...trivialJugadores].sort((a, b) => b.puntos - a.puntos);
             
             let rankingHTML = '';
@@ -1070,7 +1145,7 @@
         function avanzarRondaTrivial() {
             trivialRondaActual++;
             trivialTurnoActual = 0;
-            mostrarPantallaTrivial();
+            flujoTrivialTurno();
         }
 
         window.onload = function() {
