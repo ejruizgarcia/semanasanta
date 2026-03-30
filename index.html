@@ -424,7 +424,7 @@
                 
                 if (!notificados.has(barra.nombre + 'salidaCO') && ahora >= barra.finTs && ahora <= barra.finTs + windowMs) {
                     notificados.add(barra.nombre + 'salidaCO');
-                    mostrarNotificacion(`¡La Cruz de Guía de ${barra.nombre} sale de Carrera Oficial!`, '👋');
+                    mostrarNotificacion(`¡El último paso de ${barra.nombre} sale de Carrera Oficial!`, '👋');
                 }
 
                 if (!notificados.has(barra.nombre + 'recogida') && ahora >= barra.recogidaCruzTs && ahora <= barra.recogidaCruzTs + windowMs) {
@@ -528,7 +528,7 @@
                     boton: btn,
                     elemento: barraFondo,
                     inicioTs: obtenerTimestampAbsoluto(diaActual, cofradia.entradaCOCruz),
-                    finTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCOCruz),
+                    finTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCOPaso),
                     salidaTs: obtenerTimestampAbsoluto(diaActual, cofradia.salidaCruz),
                     recogidaCruzTs: obtenerTimestampAbsoluto(diaActual, cofradia.recogidaCruz),
                     recogidaPasoTs: obtenerTimestampAbsoluto(diaActual, cofradia.recogidaPaso)
@@ -1205,3 +1205,5 @@
     </script>
 </body>
 </html>
+
+
